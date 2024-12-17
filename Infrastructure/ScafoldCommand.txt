@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext "Server=ABDALLAH;Database=PharmacyManagement;Trusted_Connection=True;TrustServerCertificate=True;User Id=sa;password=abdallah123;Integrated Security=False;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DBEntities -ContextDir "C:\Users\NTC\Desktop\PharmacyManagement\Repository\Context" -force

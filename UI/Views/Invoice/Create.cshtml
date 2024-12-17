@@ -1,0 +1,142 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+@model Infrastructure.DTO.InvoiceDTO;
+<html>
+<head>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+    <div class="content-wrapper">
+        <!-- Content -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <h4 class="fw-bold py-3 mb-4">Create New Invoice</h4>
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            <form asp-action="Create" method="post">
+                                <fieldset>
+                                    <legend>Invoice Master</legend>
+                                    <div class="row" style="align-content:center; align-items:center;">
+                                        <div class="col-md-5">
+                                            <label>Reference Number</label>
+                                            <input type="text" asp-for="ReferenceNumber" class="form-control" />
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label>Transaction Date</label>
+                                            <input type="text" asp-for="TransactionDate" class="form-control" readonly value="@DateTime.Now" placeholder="@DateTime.Now" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <label>Customer Name</label>
+                                            <input type="text" class="form-control" asp-for="CustomerName" />
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label>Discount</label>
+                                            <input type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Invoice Details</legend>
+                                    <table id="detailsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Medicine Name</th>
+                                                <th>Number Of Items</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input name="InvoiceDetails[0].MedicineName" class="form-control" /></td>
+                                                <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control" /></td>
+                                                <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control" /></td>
+                                                <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control" readonly /></td>
+                                                <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
+                                            </tr>
+                                            <!-- Dynamic rows will be added here -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" style="text-align: right;"><strong>Grand Total:</strong></td>
+                                                <td><input type="text" class="form-control" id="grandTotal" readonly style="width: 100%; font-weight: bold;" /></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <input class="btn btn-success" type="button" id="addDetail" value="Add Medicine" />
+                                </fieldset>
+                                <br />
+                                <input type="submit" class="btn btn-primary" value="Save" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            // Function to update the grand total
+            function updateGrandTotal() {
+                let grandTotal = 0;
+                $("#detailsTable tbody tr").each(function () {
+                    let total = parseFloat($(this).find("input[name$='TotalPrice']").val()) || 0;
+                    grandTotal += total;
+                });
+                $("#grandTotal").val(grandTotal.toFixed(2));
+            }
+
+            // Add a new row
+            $("#addDetail").click(function () {
+                var newRow = `<tr>
+                    <td><input name="InvoiceDetails[0].MedicineName" class="form-control" /></td>
+                    <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control" /></td>
+                    <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control" /></td>
+                    <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control" readonly /></td>
+                    <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
+                </tr>`;
+                $("#detailsTable tbody").append(newRow);
+            });
+
+            // Remove a row or clear values if only one row exists
+            $(document).on("click", ".removeDetail", function () {
+                let rowCount = $("#detailsTable tbody tr").length;
+                if (rowCount === 1) {
+                    // Clear the values of the only row
+                    let row = $(this).closest("tr");
+                    row.find("input").val('');
+                } else {
+                    // Remove the row
+                    $(this).closest("tr").remove();
+                }
+                updateGrandTotal(); // Update grand total after removing or clearing a row
+            });
+
+            // Auto-calculate total price and update grand total
+            $(document).on("input", "input[name$='SellingPrice'], input[name$='Qty']", function () {
+                var row = $(this).closest("tr");
+                var qty = parseFloat(row.find("input[name$='Qty']").val()) || 0;
+                var sellingPrice = parseFloat(row.find("input[name$='SellingPrice']").val()) || 0;
+                var totalPrice = qty * sellingPrice;
+                row.find("input[name$='TotalPrice']").val(totalPrice.toFixed(2));
+
+                updateGrandTotal(); // Update grand total after recalculating a row's total
+            });
+
+            // Initial grand total calculation
+            updateGrandTotal();
+        });
+    </script>
+</body>
+</html>
+

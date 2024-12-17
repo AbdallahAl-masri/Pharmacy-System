@@ -1,0 +1,169 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Infrastructure.DTO.StoreDTO;
+<html>
+<head>
+
+</head>
+<body>
+    <div class="content-wrapper">
+        <!-- Content -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <h4 class="fw-bold py-3 mb-4">Create New Store</h4>
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            <form asp-action="AddNewStore">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Supplier Name
+                                        <span class="text-danger">*</span>
+                                        <select class="form-select" asp-for="SupplerId" asp-items="@(new SelectList(ViewBag.Suppliers, "Id", "Name"))">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="SupplerId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Medicine Name
+                                        <span class="text-danger">*</span>
+                                        <select class="form-select" asp-for="MedicineId" asp-items="@(new SelectList(ViewBag.Medicines, "MedicineId", "MedicineName"))">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="MedicineId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Original QTY
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" asp-for="OriginalQty" />
+                                        <span asp-validation-for="OriginalQty" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Remainig QTY
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" asp-for="RemainingQty" />
+                                        <span asp-validation-for="RemainingQty" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Cost Price
+                                        <span class="text-danger">*</span>
+                                        <input id="txtCostPrice" type="text" class="form-control" asp-for="CostPrice" onkeypress="return OnlyDecimal()" />
+                                        <span asp-validation-for="CostPrice" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Tax Value (%)
+                                        <span class="text-danger">*</span>
+                                        <input id="txtTaxValue" type="text" class="form-control" asp-for="TaxValue" onkeypress="return OnlyDecimal()" onkeyup="CalculateTax()" />
+                                        <span asp-validation-for="TaxValue" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Selling Price Before Tax
+                                        <span class="text-danger">*</span>
+                                        <input id="txtSellingPriceBeforeTax" type="text" class="form-control" asp-for="SellingPriceBeforeTax" readonly />
+                                        <span asp-validation-for="SellingPriceBeforeTax" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Selling Price After Tax
+                                        <span class="text-danger">*</span>
+                                        <input id="txtSellingPriceAfterTax" type="text" class="form-control" asp-for="SellingPriceAfterTax" readonly />
+                                        <span asp-validation-for="SellingPriceAfterTax" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Max Discount
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" asp-for="MaxDiscount" />
+                                        <span asp-validation-for="MaxDiscount" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Production Date
+                                        <span class="text-danger">*</span>
+                                        <input id="txtProductionDate" type="date" class="form-control" asp-for="ProductionDate" />
+                                        <span asp-validation-for="ProductionDate" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Expiary Date
+                                        <span class="text-danger">*</span>
+                                        <input id="txtExpiaryDate" type="date" class="form-control" asp-for="ExpiaryDate" />
+                                        <span asp-validation-for="ExpiaryDate" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="divError" style="display:none">
+                                    <div class="col-md-12 alert alert-danger">
+                                        Expiry Date should be greater than Production Date!
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="submit" value="Save" class="btn btn-primary" onclick="return checkDate()" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    function checkDate()
+    {
+        const date1 = document.getElementById('txtProductionDate').value;
+        const date2 = document.getElementById('txtExpiaryDate').value;
+
+        if(date1 > date2)
+        {
+            document.getElementById('divError').style.display = 'block';
+            return false;
+        }
+        else
+        {
+            document.getElementById('divError').style.display = 'none';
+            return true;
+        }
+    }
+
+    function CalculateTax()
+    {
+        var taxValue = document.getElementById('txtTaxValue').value;
+        var CostPrice = document.getElementById('txtCostPrice').value;
+
+        document.getElementById('txtSellingPriceBeforeTax').value = CostPrice;
+        document.getElementById('txtSellingPriceAfterTax').value = (((Number.parseFloat(taxValue / 100)) * CostPrice) + Number.parseFloat(CostPrice)).toFixed(2);
+    }
+
+    function OnlyDecimal(evt)
+    {
+        var e = evt || event;
+        var charCode = e.which || e.keyCode;
+        if((charCode >= 48 && charCode <= 57) || (charCode === 46))
+        {
+            return true;
+        }
+        return false;
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+</html>
