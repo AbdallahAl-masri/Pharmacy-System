@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace Infrastructure.Helper
 {
-     public class HopeErrorLog
+    public class HopeErrorLog
     {
         public void AddErrorLog(Exception ex, string id)
         {
@@ -19,14 +14,14 @@ namespace Infrastructure.Helper
                 obj.ModuleName = "User - JobGetAllDescriptions ";
                 obj.TransactionDate = DateTime.Now;
             }
-            catch (Exception ex1 )
+            catch (Exception ex1)
             {
 
                 var applog = new EventLog("Application");
                 applog.Source = "Application ";
                 applog.WriteEntry(ex1.Message, EventLogEntryType.Error);
             }
-           
+
 
 
         }

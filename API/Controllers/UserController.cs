@@ -1,5 +1,4 @@
 ﻿using Hope.Repository.IRepository;
-using Hope.Repository.Repository;
 using Infrastructure.Base;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +19,7 @@ namespace API.Controllers
         private readonly ISectionRepository _sectionRepository;
 
         public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, IErrorLogRepository errorLogRepository,
-             IDepartmentRepository departmentRepository ,ISectionRepository sectionRepository)
+             IDepartmentRepository departmentRepository, ISectionRepository sectionRepository)
         {
             _userRepository = userRepository;
             _jobDescriptionRepository = jobDescriptionRepository;
@@ -65,7 +64,7 @@ namespace API.Controllers
 
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         public IActionResult GetUserById(int UserId)
@@ -118,7 +117,7 @@ namespace API.Controllers
         {
             try
             {
-                userDTO.Password = Security.EncryptString(userDTO.Password); 
+                userDTO.Password = Security.EncryptString(userDTO.Password);
                 EntitiyComponent.DBEntities.User user = new EntitiyComponent.DBEntities.User();
 
                 user.Address = userDTO.Address;
@@ -146,7 +145,7 @@ namespace API.Controllers
 
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         public IActionResult UpdateUser(UserDTO userDTO)
@@ -217,7 +216,7 @@ namespace API.Controllers
                     appLog.Source = "Application";
                     appLog.WriteEntry("Error Occured in Pharmacy Project", EventLogEntryType.Error);
                 }
-                
+
                 return BadRequest(ex.Message);
             }
         }
@@ -234,7 +233,7 @@ namespace API.Controllers
 
                 return Ok("Success");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -251,7 +250,7 @@ namespace API.Controllers
             else
             {
                 loginDTO.Password = Security.EncryptString(loginDTO.Password);
-                if(result.Password.Equals(loginDTO.Password))
+                if (result.Password.Equals(loginDTO.Password))
                 {
                     return Ok(result.UserId);
                 }

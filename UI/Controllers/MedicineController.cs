@@ -13,7 +13,7 @@ namespace UI.Controllers
         public async Task<IActionResult> Create()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl+"Medicine/GetAllMedicineDepartments");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicineDepartments");
 
             var apiResponse = await response.Content.ReadAsStringAsync();
 
@@ -49,7 +49,7 @@ namespace UI.Controllers
 
             var ClientContextDTO = JsonConvert.SerializeObject(medicinesDTO);
 
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl+"Medicine/AddNewMedicine", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Medicine/AddNewMedicine", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return View();
         }

@@ -1,11 +1,6 @@
 ﻿using EntitiyComponent;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -20,7 +15,7 @@ namespace Repository
         }
         public void Add(TEntity entity)
         {
-            if(entity == null)
+            if (entity == null)
             {
                 throw new ArgumentNullException("entity");
             }

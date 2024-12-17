@@ -4,7 +4,6 @@ using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace UI.Controllers
 {
@@ -13,10 +12,10 @@ namespace UI.Controllers
         public async Task<IActionResult> Create()
         {
             HttpClient client = new HttpClient();
-            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl+"User/GetAllJobDescriptions");
+            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllJobDescriptions");
             string apiResponseJob = await responseJob.Content.ReadAsStringAsync();
 
-            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl+ "User/GetAllDepartments");
+            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllDepartments");
             string apiResponseDept = await responseDept.Content.ReadAsStringAsync();
 
 
@@ -46,7 +45,7 @@ namespace UI.Controllers
 
             var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
 
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl+"User/AddNewUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "User/AddNewUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return RedirectToAction("GetAllUsers");
         }
@@ -54,7 +53,7 @@ namespace UI.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl+"User/GetAllUsers");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllUsers");
             string apiResponse = await response.Content.ReadAsStringAsync();
 
             var result = JsonConvert.DeserializeObject<List<UserDTO>>(apiResponse);
@@ -99,7 +98,7 @@ namespace UI.Controllers
 
             var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
 
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl+"User/UpdateUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "User/UpdateUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return RedirectToAction("GetAllUsers");
         }

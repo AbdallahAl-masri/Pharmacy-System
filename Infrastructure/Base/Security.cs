@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Infrastructure.Base
@@ -44,15 +40,15 @@ namespace Infrastructure.Base
         {
             byte[] Results;
             UTF8Encoding UTF8 = new UTF8Encoding();
-            using(var hashProvider = MD5.Create())
+            using (var hashProvider = MD5.Create())
             {
                 byte[] TDESKey = hashProvider.ComputeHash(UTF8.GetBytes("Al-Ma$r1"));
 
-                using(var tdesAlgorithm = TripleDES.Create())
+                using (var tdesAlgorithm = TripleDES.Create())
                 {
                     tdesAlgorithm.Key = TDESKey;
                     tdesAlgorithm.Mode = CipherMode.ECB;
-                    tdesAlgorithm.Padding= PaddingMode.PKCS7;
+                    tdesAlgorithm.Padding = PaddingMode.PKCS7;
 
                     string urlDecoded = HttpUtility.UrlDecode(Message);
                     byte[] DataToDecrypt;
@@ -77,7 +73,7 @@ namespace Infrastructure.Base
                     }
                 }
             }
-            
+
             return UTF8.GetString(Results);
         }
     }

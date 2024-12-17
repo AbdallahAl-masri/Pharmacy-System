@@ -1,6 +1,5 @@
 ﻿using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.IRepository;
@@ -47,7 +46,7 @@ namespace API.Controllers
         {
             try
             {
-                List<MedicineDepartmentDTO> medicineDepartmentDTOs = new List<MedicineDepartmentDTO> ();
+                List<MedicineDepartmentDTO> medicineDepartmentDTOs = new List<MedicineDepartmentDTO>();
 
                 medicineDepartmentDTOs = (from obj in _medicineDepartmentRepository.GetAll()
                                           select new MedicineDepartmentDTO
@@ -72,22 +71,23 @@ namespace API.Controllers
 
         public IActionResult GetAllMedicine()
         {
-            try {
-            List<MedicinesDTO> medicinesDTOs = new List<MedicinesDTO> ();
-
-            medicinesDTOs = (from obj in _medicineRepository.GetAll()
-                             select new MedicinesDTO
-                             {
-                                 MedicineId = obj.MedicineId,
-                                 MedicineName = obj.MedicineName,
-                             }).ToList();
-
-            string JsonString = JsonConvert.SerializeObject(medicinesDTOs, Formatting.None, new JsonSerializerSettings
+            try
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+                List<MedicinesDTO> medicinesDTOs = new List<MedicinesDTO>();
 
-            return Ok(JsonString);
+                medicinesDTOs = (from obj in _medicineRepository.GetAll()
+                                 select new MedicinesDTO
+                                 {
+                                     MedicineId = obj.MedicineId,
+                                     MedicineName = obj.MedicineName,
+                                 }).ToList();
+
+                string JsonString = JsonConvert.SerializeObject(medicinesDTOs, Formatting.None, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+                return Ok(JsonString);
             }
             catch (Exception ex)
             {

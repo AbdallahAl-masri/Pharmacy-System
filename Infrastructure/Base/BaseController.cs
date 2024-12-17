@@ -3,12 +3,6 @@ using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Base
 {
@@ -16,7 +10,7 @@ namespace Infrastructure.Base
     {
         public override async void OnActionExecuting(ActionExecutingContext context)
         {
-            if(IsUserLoggedIn())
+            if (IsUserLoggedIn())
             {
                 ViewBag.UserId = HttpContext.User.Claims.Where(x => x.Type == "UserID").FirstOrDefault().Value;
             }
@@ -30,7 +24,7 @@ namespace Infrastructure.Base
         {
             var result = HttpContext.User.Claims.Where(x => x.Type == "UserID").FirstOrDefault();
 
-            if(result != null)
+            if (result != null)
             {
                 return true;
             }

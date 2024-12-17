@@ -12,11 +12,11 @@ namespace UI.Controllers
         public async Task<IActionResult> Create()
         {
             HttpClient client = new HttpClient();
-            var responseSupplier = await client.GetAsync(ConfigSettings.BaseApiUrl+"Store/GetAllSupplier");
+            var responseSupplier = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllSupplier");
             var apiResponseSupplier = await responseSupplier.Content.ReadAsStringAsync();
             ViewBag.Suppliers = JsonConvert.DeserializeObject<List<SupplierDTO>>(apiResponseSupplier);
 
-            var responseMedicine = await client.GetAsync(ConfigSettings.BaseApiUrl+"Medicine/GetAllMedicine");
+            var responseMedicine = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
             var apiResponseMedicine = await responseMedicine.Content.ReadAsStringAsync();
             ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponseMedicine);
 
@@ -27,7 +27,7 @@ namespace UI.Controllers
         {
             HttpClient client = new HttpClient();
             var clientContextDTO = JsonConvert.SerializeObject(storeDTO);
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl+"Store/AddNewStore", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Store/AddNewStore", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
 
             return View();
         }

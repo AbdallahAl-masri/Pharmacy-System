@@ -14,7 +14,7 @@ namespace API.Controllers
         private readonly IModuleRoleRepository _moduleRoleRepository;
         private readonly IModuleRepository _moduleRepository;
 
-        public CommonController(IAssignUsersToRoleRepository assignUsersToRoleRepository, IModuleRoleRepository moduleRoleRepository ,IModuleRepository moduleRepository)
+        public CommonController(IAssignUsersToRoleRepository assignUsersToRoleRepository, IModuleRoleRepository moduleRoleRepository, IModuleRepository moduleRepository)
         {
             _assignUsersToRoleRepository = assignUsersToRoleRepository;
             _moduleRoleRepository = moduleRoleRepository;
@@ -45,11 +45,11 @@ namespace API.Controllers
         public IActionResult GetAllServices(string Key)
         {
             List<ServicesDTO> servicesDTOs = (from x in _moduleRepository.Find(x => x.ModuleName.Contains(Key))
-                                                        select new ServicesDTO
-                                                        {
-                                                            Name = x.ModuleName,
-                                                            URL = x.MuduleUrl,
-                                                        }).ToList();
+                                              select new ServicesDTO
+                                              {
+                                                  Name = x.ModuleName,
+                                                  URL = x.MuduleUrl,
+                                              }).ToList();
 
             string jsonString = JsonConvert.SerializeObject(servicesDTOs, Formatting.None, new JsonSerializerSettings
             {
