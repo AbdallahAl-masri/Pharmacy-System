@@ -1,4 +1,6 @@
-﻿using EntitiyComponent.DBEntities;
+﻿using System;
+using System.Collections.Generic;
+using EntitiyComponent.DBEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntitiyComponent;
@@ -104,6 +106,7 @@ public partial class PharmacyManagementContext : DbContext
 
             entity.Property(e => e.Qty).HasColumnName("QTY");
             entity.Property(e => e.SellingPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalCost).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.InvoiceMaster).WithMany(p => p.InvoiceDetails)
                 .HasForeignKey(d => d.InvoiceMasterId)
@@ -123,11 +126,11 @@ public partial class PharmacyManagementContext : DbContext
             entity.Property(e => e.CustomerName)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ReferenceNumber)
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.TotalCostPrice).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.TotalSellingPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
         });
 
         modelBuilder.Entity<JobDescription>(entity =>

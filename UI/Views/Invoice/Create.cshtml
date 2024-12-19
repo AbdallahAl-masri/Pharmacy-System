@@ -8,6 +8,39 @@
 <html>
 <head>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <style>
+        .medicine-list {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            z-index: 1000;
+        }
+
+        .medicine-list li {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .medicine-list li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .medicine-list .no-result {
+            color: #888;
+            text-align: center;
+            padding: 8px;
+        }
+
+    </style>
+
 </head>
 <body>
     <div class="content-wrapper">
@@ -18,7 +51,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card-body">
-                            <form asp-action="Create" method="post">
+                            <form asp-action="AddNewInvoice" method="post">
                                 <fieldset>
                                     <legend>Invoice Master</legend>
                                     <div class="row" style="align-content:center; align-items:center;">
@@ -57,7 +90,12 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><input name="InvoiceDetails[0].MedicineName" class="form-control" /></td>
+                                                <td>
+                                                    <div class="medicine-search-wrapper">
+                                                        <input type="text" class="form-control medicine-search" data-hidden-input-name="InvoiceDetails[${rowCount}].MedicineId" placeholder="Search for medicine..." />
+                                                        <ul class="medicine-list"></ul>
+                                                    </div>
+                                                </td>
                                                 <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control" /></td>
                                                 <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control" /></td>
                                                 <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control" readonly /></td>
@@ -86,57 +124,110 @@
     </div>
     <script>
         $(document).ready(function () {
-            // Function to update the grand total
+            // Initialize the default field
+            initializeMedicineSearch($(".medicine-search"));
+
+            // Add new rows dynamically with dropdown functionality
+            $("#addDetail").click(function () {
+                const rowCount = $("#detailsTable tbody tr").length;
+                const newRow = `
+                    <tr>
+                        <td>
+                            <div class="medicine-search-wrapper">
+                                <input
+                                    type="text"
+                                    class="form-control medicine-search"
+                                    placeholder="Search for medicine"
+                                    data-hidden-input-name="InvoiceDetails[${rowCount}].MedicineId"
+                                />
+                                <ul class="medicine-list" style="display: none; position: absolute; z-index: 1000;"></ul>
+                            </div>
+                        </td>
+                        <td><input name="InvoiceDetails[${rowCount}].Qty" type="number" class="form-control" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].SellingPrice" type="number" class="form-control" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control" readonly /></td>
+                        <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
+                    </tr>
+                `;
+                $("#detailsTable tbody").append(newRow);
+
+                // Initialize dropdown functionality for the new input
+                initializeMedicineSearch($("#detailsTable tbody tr:last .medicine-search"));
+            });
+
+            // Initialize medicine search functionality
+            function initializeMedicineSearch($input) {
+                $input.on("input", function () {
+                    const query = $(this).val().trim();
+                    const $list = $(this).siblings(".medicine-list");
+
+                    if (query.length === 0) {
+                        $list.hide().empty();
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '@Url.Content("/Invoice/SearchMedicines")',
+                        type: "GET",
+                        data: { query },
+                        success: function (data) {
+                            $list.empty();
+                            if (data.length === 0) {
+                                $list.append('<li class="no-result">No medicines found</li>');
+                            } else {
+                                data.forEach(function (med) {
+                                    $list.append(`<li class="medicine-item" data-id="${med.medicineId}" data-name="${med.medicineName}">${med.medicineName}</li>`);
+                                });
+                            }
+                            $list.show();
+                        },
+                        error: function () {
+                            alert("Unable to fetch medicines. Please try again.");
+                        },
+                    });
+                });
+
+                // Handle item selection
+                $input.siblings(".medicine-list").on("click", ".medicine-item", function () {
+                    const $item = $(this);
+                    const medicineName = $item.data("name");
+                    const medicineId = $item.data("id");
+
+                    $input.val(medicineName);
+                    const hiddenInputName = $input.data("hidden-input-name");
+                    if (hiddenInputName) {
+                        $(`<input type="hidden" name="${hiddenInputName}" value="${medicineId}" />`).appendTo($input.closest("td"));
+                    }
+                    $item.parent().hide().empty();
+                });
+            }
+
+            // Remove row and update totals
+            $(document).on("click", ".removeDetail", function () {
+                const rowCount = $("#detailsTable tbody tr").length;
+                if (rowCount === 1) {
+                    const row = $(this).closest("tr");
+                    row.find("input").val("");
+                    row.find("ul.medicine-list").hide();
+                } else {
+                    $(this).closest("tr").remove();
+                }
+                updateGrandTotal();
+            });
+
+            // Update grand total
             function updateGrandTotal() {
                 let grandTotal = 0;
                 $("#detailsTable tbody tr").each(function () {
-                    let total = parseFloat($(this).find("input[name$='TotalPrice']").val()) || 0;
+                    const total = parseFloat($(this).find("input[name$='TotalPrice']").val()) || 0;
                     grandTotal += total;
                 });
                 $("#grandTotal").val(grandTotal.toFixed(2));
             }
-
-            // Add a new row
-            $("#addDetail").click(function () {
-                var newRow = `<tr>
-                    <td><input name="InvoiceDetails[0].MedicineName" class="form-control" /></td>
-                    <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control" /></td>
-                    <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control" /></td>
-                    <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control" readonly /></td>
-                    <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
-                </tr>`;
-                $("#detailsTable tbody").append(newRow);
-            });
-
-            // Remove a row or clear values if only one row exists
-            $(document).on("click", ".removeDetail", function () {
-                let rowCount = $("#detailsTable tbody tr").length;
-                if (rowCount === 1) {
-                    // Clear the values of the only row
-                    let row = $(this).closest("tr");
-                    row.find("input").val('');
-                } else {
-                    // Remove the row
-                    $(this).closest("tr").remove();
-                }
-                updateGrandTotal(); // Update grand total after removing or clearing a row
-            });
-
-            // Auto-calculate total price and update grand total
-            $(document).on("input", "input[name$='SellingPrice'], input[name$='Qty']", function () {
-                var row = $(this).closest("tr");
-                var qty = parseFloat(row.find("input[name$='Qty']").val()) || 0;
-                var sellingPrice = parseFloat(row.find("input[name$='SellingPrice']").val()) || 0;
-                var totalPrice = qty * sellingPrice;
-                row.find("input[name$='TotalPrice']").val(totalPrice.toFixed(2));
-
-                updateGrandTotal(); // Update grand total after recalculating a row's total
-            });
-
-            // Initial grand total calculation
-            updateGrandTotal();
         });
+
     </script>
+
 </body>
 </html>
 

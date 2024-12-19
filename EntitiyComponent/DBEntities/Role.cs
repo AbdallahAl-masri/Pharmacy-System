@@ -1,4 +1,7 @@
-﻿namespace EntitiyComponent.DBEntities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EntitiyComponent.DBEntities;
 
 public partial class Role
 {

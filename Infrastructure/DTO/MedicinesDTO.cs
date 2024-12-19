@@ -21,5 +21,7 @@ namespace Infrastructure.DTO
         public string ImageReadPath { get; set; }
 
         //public List<MedicineDepartmentDTO> MedicineDepartmentsList { get; set; }
+
+        public string DepartmentName {  get; set; }
     }
 }

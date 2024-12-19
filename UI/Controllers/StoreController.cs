@@ -29,7 +29,17 @@ namespace UI.Controllers
             var clientContextDTO = JsonConvert.SerializeObject(storeDTO);
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Store/AddNewStore", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
 
-            return View();
+            return RedirectToAction("GetAllStores");
+        }
+
+        public async Task<IActionResult> GetAllStores()
+        {
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllStores");
+            var apiResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<StoreDTO>>(apiResponse);
+
+            return View(result);
         }
     }
 }

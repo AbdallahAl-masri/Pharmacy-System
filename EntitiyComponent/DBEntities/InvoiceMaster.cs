@@ -1,4 +1,7 @@
-﻿namespace EntitiyComponent.DBEntities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EntitiyComponent.DBEntities;
 
 public partial class InvoiceMaster
 {
@@ -10,11 +13,9 @@ public partial class InvoiceMaster
 
     public string CustomerName { get; set; }
 
-    public int? NumberOfItems { get; set; }
+    public decimal TotalAmount { get; set; }
 
-    public decimal? TotalCostPrice { get; set; }
-
-    public decimal? TotalSellingPrice { get; set; }
+    public decimal GrandTotal { get; set; }
 
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
 }

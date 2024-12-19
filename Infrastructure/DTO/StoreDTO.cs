@@ -49,5 +49,9 @@ namespace Infrastructure.DTO
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "This field is required")]
         public DateOnly ExpiaryDate { get; set; }
+
+        public string MedicineName { get; set; }
+        public string MedicineDescription { get; set; }
+        public string DepartmentName { get; set; }
     }
 }

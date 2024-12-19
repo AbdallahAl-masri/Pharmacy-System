@@ -51,7 +51,17 @@ namespace UI.Controllers
 
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Medicine/AddNewMedicine", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
-            return View();
+            return RedirectToAction("GetAllMedicines");
+        }
+
+        public async Task<IActionResult> GetAllMedicines()
+        {
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            var apiResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponse);
+
+            return View(result);
         }
 
         public class MedicineImage

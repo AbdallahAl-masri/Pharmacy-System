@@ -1,6 +1,7 @@
 ﻿using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Repository.IRepository;
 
@@ -80,6 +81,8 @@ namespace API.Controllers
                                  {
                                      MedicineId = obj.MedicineId,
                                      MedicineName = obj.MedicineName,
+                                     DepartmentName = obj.MedicineDepartment.DepartmentName,
+                                     
                                  }).ToList();
 
                 string JsonString = JsonConvert.SerializeObject(medicinesDTOs, Formatting.None, new JsonSerializerSettings
@@ -88,6 +91,36 @@ namespace API.Controllers
                 });
 
                 return Ok(JsonString);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult SearchMedicines(string key)
+        {
+            try
+            {
+                var medicines = _medicineRepository
+                .GetAll()
+                .Where(m => EF.Functions.Like(m.MedicineName, $"%{key}%"))
+                .Select(m => new SearchMedicineDTO
+                {
+                    MedicineName = m.MedicineName,
+                    MedicineId = m.MedicineId,
+                })
+                .Take(10) // Limit results for performance
+                .ToList();
+
+
+                //string JsonString = JsonConvert.SerializeObject(medicines, Formatting.None, new JsonSerializerSettings
+                //{
+                //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                //});
+
+                return Ok(medicines);
             }
             catch (Exception ex)
             {

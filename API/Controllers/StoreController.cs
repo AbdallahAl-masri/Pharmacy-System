@@ -40,6 +40,36 @@ namespace API.Controllers
             return View();
         }
 
+        public IActionResult GetAllStores()
+        {
+            try
+            {
+                List<StoreDTO> stores = new List<StoreDTO>();
+
+                stores = (from obj in _storeRepository.GetAll()
+                          select new StoreDTO
+                          {
+                              CostPrice = obj.CostPrice,
+                              OriginalQty = obj.OriginalQty,
+                              MedicineDescription = obj.Medicine.Description,
+                              DepartmentName = obj.Medicine.MedicineDepartment.DepartmentName,
+                              MedicineName = obj.Medicine.MedicineName,
+
+                          }).ToList();
+                string JsonString = JsonConvert.SerializeObject(stores, Formatting.None, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+                return Ok(JsonString);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
         public IActionResult GetAllSupplier()
         {
             try

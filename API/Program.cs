@@ -22,6 +22,8 @@ builder.Services.AddScoped<IModuleRoleRepository, ModuleRoleRepository>();
 builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+builder.Services.AddScoped<IInvoiceMasterRepository, InvoiceMasterRepository>();
+builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailsRepository>();
 
 builder.Services.AddCors(options =>
 {
