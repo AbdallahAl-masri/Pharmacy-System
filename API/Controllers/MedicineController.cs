@@ -39,7 +39,7 @@ namespace API.Controllers
                 obj.ImageName = medicinesDTO.ImageName;
 
                 _medicineRepository.Add(obj);
-                return Ok("Succes");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -118,12 +118,6 @@ namespace API.Controllers
                 })
                 .Take(10) // Limit results for performance
                 .ToList();
-
-
-                //string JsonString = JsonConvert.SerializeObject(medicines, Formatting.None, new JsonSerializerSettings
-                //{
-                //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                //});
 
                 return Ok(medicines);
             }

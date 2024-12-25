@@ -3,9 +3,13 @@ using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Repository.IRepository;
 namespace API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]/[action]")]
     public class InvoiceController : Controller
     {
         private readonly IInvoiceMasterRepository _invoiceMasterRepository;
@@ -24,6 +28,7 @@ namespace API.Controllers
             _storeRepository = storeRepository;
             _errorLogService = errorLogService;
         }
+        [HttpPost]
         public IActionResult AddNewInvoice(InvoiceDTO invoiceDTO)
         {
 
@@ -35,34 +40,80 @@ namespace API.Controllers
                     ReferenceNumber = invoiceDTO.ReferenceNumber,
                     CustomerName = invoiceDTO.CustomerName,
                     TransactionDate = DateOnly.FromDateTime(DateTime.Now),
+                    GrandTotal = invoiceDTO.GrandTotal,
                 };
 
+                // Add the new invoice master to the database
                 _invoiceMasterRepository.Add(newInvoice);
 
                 // Add invoice details
                 foreach (var detail in invoiceDTO.InvoiceDetails)
                 {
+                    // Ensure the medicine exists
                     var medicine = _medicineRepository.Find(x => x.MedicineName == detail.MedicineName).FirstOrDefault();
-                    var descount = _storeRepository.Find(x => x.MedicineId == medicine.MedicineId).FirstOrDefault();
-                    var totalCost = detail.Quantity * detail.Price - (detail.Price * descount.MaxDiscount);
 
+                    // Ensure the discount exists for the medicine
+                    var discountInfo = _storeRepository.Find(x => x.MedicineId == medicine.MedicineId).FirstOrDefault();
+
+                    // Calculate total cost
+                    var totalCost = detail.TotalPrice - (detail.Price * discountInfo.MaxDiscount);
+
+                    // Create invoice detail
                     var invoiceDetail = new InvoiceDetail
                     {
                         InvoiceMasterId = newInvoice.InvoiceMasterId,
                         MedicineId = medicine.MedicineId,
                         Qty = detail.Quantity,
-                        SellingPrice = detail.Price,
+                        Price = detail.Price,
                         TotalCost = totalCost
                     };
 
+                    // Add the invoice detail to the database
                     _invoiceDetailsRepository.Add(invoiceDetail);
                 }
 
-                return View();
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 _errorLogService.AddErrorLog(ex, "Invoice Controller - AddNewInvoice");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult GetAllInvoices()
+        {
+            try
+            {
+                List<InvoiceDTO> invoices = new List<InvoiceDTO>();
+                invoices = (from invoice in _invoiceMasterRepository.GetAll().Include(x => x.InvoiceDetails)
+                            select new InvoiceDTO
+                            {
+                                ReferenceNumber = invoice.ReferenceNumber,
+                                TransactionDate = invoice.TransactionDate,
+                                CustomerName = invoice.CustomerName,
+                                GrandTotal = invoice.GrandTotal,
+                                InvoiceDetails = (from detail in invoice.InvoiceDetails
+                                                  select new InvoiceDetailDTO
+                                                  {
+                                                      MedicineName = detail.Medicine.MedicineName,
+                                                      Quantity = detail.Qty,
+                                                      Price = detail.Price,
+                                                      TotalPrice = detail.TotalCost,
+                                                  }).ToList()
+                            }).ToList();
+
+                string JsonString = JsonConvert.SerializeObject(invoices, Formatting.None, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+                return Ok(JsonString);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.AddErrorLog(ex, "Invoice Controller - GetAllInvoices");
                 return BadRequest(ex.Message);
             }
         }

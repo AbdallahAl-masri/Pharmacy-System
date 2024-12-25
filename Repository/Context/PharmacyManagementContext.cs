@@ -104,8 +104,8 @@ public partial class PharmacyManagementContext : DbContext
         {
             entity.HasKey(e => e.InvoiceDetailsId);
 
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Qty).HasColumnName("QTY");
-            entity.Property(e => e.SellingPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.TotalCost).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.InvoiceMaster).WithMany(p => p.InvoiceDetails)
@@ -130,7 +130,6 @@ public partial class PharmacyManagementContext : DbContext
             entity.Property(e => e.ReferenceNumber)
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
         });
 
         modelBuilder.Entity<JobDescription>(entity =>

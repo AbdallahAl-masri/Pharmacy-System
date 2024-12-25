@@ -138,7 +138,7 @@ namespace API.Controllers
                 user.SectionId = userDTO.SectionId;
 
                 _userRepository.Add(user);
-                return Ok("Success");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -170,7 +170,7 @@ namespace API.Controllers
                 user.JobDescriptionId = userDTO.JobDescriptionId;
 
                 _userRepository.Update(user);
-                return Ok("Success");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -216,7 +216,7 @@ namespace API.Controllers
 
                 _userRepository.Delete(obj);
 
-                return Ok("Success");
+                return Ok();
             }
             catch (Exception ex)
             {

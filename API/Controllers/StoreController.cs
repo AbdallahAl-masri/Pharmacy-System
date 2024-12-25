@@ -45,7 +45,7 @@ namespace API.Controllers
 
                 _storeRepository.Add(store);
 
-                return View();
+                return Ok();
             }
             catch (Exception ex)
             {

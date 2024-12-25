@@ -10,10 +10,6 @@ namespace UI.Controllers
     {
         public IActionResult Create()
         {
-            //HttpClient client = new HttpClient();
-            //var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
-            //var apiResponse = await response.Content.ReadAsStringAsync();
-            //ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponse);
             var ReferenceNumber = Guid.NewGuid().ToString("N").ToUpper();
             ViewBag.ReferenceNumber = ReferenceNumber;
             return View();
@@ -25,7 +21,7 @@ namespace UI.Controllers
             var clientContextDTO = JsonConvert.SerializeObject(invoiceDTO);
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Invoice/AddNewInvoice", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
 
-            return View();
+            return RedirectToAction("GetAllInvoices");
         }
 
         public async Task<JsonResult> SearchMedicines(string query)
@@ -36,6 +32,17 @@ namespace UI.Controllers
             var result = JsonConvert.DeserializeObject<List<SearchMedicineDTO>>(apiReesponse);
 
             return Json(result);
+        }
+
+        public async Task<IActionResult> GetAllInvoices()
+        {
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Invoice/GetAllInvoices");
+            string apiResponse = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<List<InvoiceDTO>>(apiResponse);
+
+            return View(result);
         }
     }
 }

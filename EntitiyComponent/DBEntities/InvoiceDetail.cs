@@ -13,9 +13,9 @@ public partial class InvoiceDetail
 
     public int Qty { get; set; }
 
-    public decimal SellingPrice { get; set; }
-
     public decimal TotalCost { get; set; }
+
+    public decimal Price { get; set; }
 
     public virtual InvoiceMaster InvoiceMaster { get; set; }
 

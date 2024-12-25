@@ -83,10 +83,6 @@ namespace UI.Controllers
             var apiResponse = await response.Content.ReadAsStringAsync();
             UserDTO userDTO = JsonConvert.DeserializeObject<UserDTO>(apiResponse);
 
-            //client = new HttpClient();
-            //response = await client.GetAsync("http://localhost:5039/api/User/GetAllJobDescriptions");
-            //apiResponse = await response.Content.ReadAsStringAsync();
-            //ViewBag.JobDescription = JsonConvert.DeserializeObject<List<JobDescriptionDTO>>(apiResponse);
             ViewBag.JobDescription = userDTO.JobDescriptionsList;
 
             return View(userDTO);

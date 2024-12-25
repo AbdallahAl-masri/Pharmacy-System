@@ -46,6 +46,9 @@
         <!-- Content -->
         <div class="container-xxl flex-grow-1 container-p-y">
             <h4 class="fw-bold py-3 mb-4">Create New Invoice</h4>
+            <div class="row CustomAdd" style="text-align:right; margin-top:-60px; padding-bottom:10px">
+                <a href="~/Invoice/GetAllInvoices"><i class="fa fa-plus" aria-hidden="true"></i>View All Bills</a>
+            </div>
             <div class="card">
                 <div class="row">
                     <div class="col-md-12">
@@ -87,13 +90,13 @@
                                             <tr>
                                                 <td>
                                                     <div class="medicine-search-wrapper">
-                                                        <input type="text" class="form-control medicine-search" data-hidden-input-name="InvoiceDetails[0].MedicineId" placeholder="Search for medicine..." />
+                                                        <input type="text" class="form-control medicine-search" name="InvoiceDetails[0].MedicineName" asp-for="InvoiceDetails[0].MedicineName" data-hidden-input-name="InvoiceDetails[0].MedicineId" placeholder="Search for medicine..." />
                                                         <ul class="medicine-list"></ul>
                                                     </div>
                                                 </td>
-                                                <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control Qty" /></td>
-                                                <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control selling-price" /></td>
-                                                <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control total-price" readonly /></td>
+                                                <td><input name="InvoiceDetails[0].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[0].Quantity" /></td>
+                                                <td><input name="InvoiceDetails[0].Price" type="number" step="any" class="form-control price" asp-for="InvoiceDetails[0].Price" /></td>
+                                                <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[0].TotalPrice" readonly /></td>
                                                 <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
                                             </tr>
                                             <!-- Dynamic rows will be added here -->
@@ -101,7 +104,7 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3" style="text-align: right;"><strong>Grand Total:</strong></td>
-                                                <td><input type="text" class="form-control" id="grandTotal" readonly style="width: 100%; font-weight: bold;" /></td>
+                                                <td><input type="text" class="form-control" asp-for="GrandTotal" id="grandTotal" readonly style="width: 100%; font-weight: bold;" /></td>
                                                 <td></td>
                                             </tr>
                                         </tfoot>
@@ -129,18 +132,20 @@
                     <tr>
                         <td>
                             <div class="medicine-search-wrapper">
-                                <input
-                                    type="text"
+                                <input 
+                                    type="text" 
                                     class="form-control medicine-search"
-                                    placeholder="Search for medicine"
-                                    data-hidden-input-name="InvoiceDetails[${rowCount}].MedicineId"
-                                />
+                                    name="InvoiceDetails[${rowCount}].MedicineName"
+                                    asp-for="InvoiceDetails[${rowCount}].MedicineName"
+                                    data-hidden-input-name="InvoiceDetails[0].MedicineId"
+                                    placeholder="Search for medicine..."
+                                    />
                                 <ul class="medicine-list" style="display: none; position: absolute; z-index: 1000;"></ul>
                             </div>
                         </td>
-                        <td><input name="InvoiceDetails[${rowCount}].Qty" type="number" class="form-control Qty" /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].SellingPrice" type="number" class="form-control selling-price" /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control total-price" readonly /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[${rowCount}].Quantity" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].Price" type="number" step="any" class="form-control price" asp-for="InvoiceDetails[${rowCount}].Price" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[${rowCount}].TotalPrice" readonly /></td>
                         <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
                     </tr>
                 `;
@@ -204,7 +209,7 @@
 
             // Attach calculation events to inputs
             function attachCalculationHandlers($row) {
-                $row.find(".Qty, .selling-price").on("input", function () {
+                $row.find(".Qty, .price").on("input", function () {
                     calculateRowTotal($row);
                 });
             }
@@ -212,7 +217,7 @@
             // Calculate row total
             function calculateRowTotal($row) {
                 const qty = parseFloat($row.find(".Qty").val()) || 0;
-                                const sellingPrice = parseFloat($row.find(".selling-price").val()) || 0;
+                                const sellingPrice = parseFloat($row.find(".price").val()) || 0;
                 const total = qty * sellingPrice;
                 $row.find(".total-price").val(total.toFixed(2));
                 calculateGrandTotal();
