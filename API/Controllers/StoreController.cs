@@ -12,32 +12,44 @@ namespace API.Controllers
     {
         private readonly IStoreRepository _storeRepository;
         private readonly ISupplierRepository _supplierRepository;
+        private readonly ErrorLogService _errorLogService;
 
-        public StoreController(IStoreRepository storeRepository, ISupplierRepository supplierRepository)
+        public StoreController(IStoreRepository storeRepository, ISupplierRepository supplierRepository,
+            ErrorLogService errorLogService)
         {
             _storeRepository = storeRepository;
             _supplierRepository = supplierRepository;
+            _errorLogService = errorLogService;
         }
 
         public IActionResult AddNewStore(StoreDTO storeDTO)
         {
-            Store store = new Store();
 
-            store.ProductionDate = storeDTO.ProductionDate;
-            store.CostPrice = storeDTO.CostPrice;
-            store.SellingPriceAfterTax = storeDTO.SellingPriceAfterTax;
-            store.OriginalQty = storeDTO.OriginalQty;
-            store.RemainingQty = storeDTO.RemainingQty;
-            store.SellingPriceBeforeTax = storeDTO.SellingPriceBeforeTax;
-            store.SupplerId = storeDTO.SupplerId;
-            store.MaxDiscount = storeDTO.MaxDiscount;
-            store.MedicineId = storeDTO.MedicineId;
-            store.ExpiaryDate = storeDTO.ExpiaryDate;
-            store.TaxValue = storeDTO.TaxValue;
+            try
+            {
+                Store store = new Store();
 
-            _storeRepository.Add(store);
+                store.ProductionDate = storeDTO.ProductionDate;
+                store.CostPrice = storeDTO.CostPrice;
+                store.SellingPriceAfterTax = storeDTO.SellingPriceAfterTax;
+                store.OriginalQty = storeDTO.OriginalQty;
+                store.RemainingQty = storeDTO.RemainingQty;
+                store.SellingPriceBeforeTax = storeDTO.SellingPriceBeforeTax;
+                store.SupplerId = storeDTO.SupplerId;
+                store.MaxDiscount = storeDTO.MaxDiscount;
+                store.MedicineId = storeDTO.MedicineId;
+                store.ExpiaryDate = storeDTO.ExpiaryDate;
+                store.TaxValue = storeDTO.TaxValue;
 
-            return View();
+                _storeRepository.Add(store);
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.AddErrorLog(ex, "Store Controller - AddNewStore");
+                return BadRequest(ex.Message);
+            }
         }
 
         public IActionResult GetAllStores()
@@ -65,7 +77,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Store Controller - GetAllStores");
                 return BadRequest(ex.Message);
             }
         }
@@ -91,7 +103,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Store Controller - GetAllSupplier");
                 return BadRequest(ex.Message);
             }
 

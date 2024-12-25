@@ -1,7 +1,7 @@
 ﻿using EntitiyComponent.DBEntities;
 using Repository;
 
-namespace Hope.Repository.IRepository
+namespace Repository.IRepository
 {
     public interface IModuleRepository : IRepository<Module>
     {

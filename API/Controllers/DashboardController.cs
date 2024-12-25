@@ -11,11 +11,14 @@ namespace API.Controllers
     {
         private readonly IStoreRepository _storeRepository;
         private readonly ISupplierRepository _supplierRepository;
+        private readonly ErrorLogService _errorLogService;
 
-        public DashboardController(IStoreRepository storeRepository, ISupplierRepository supplierRepository)
+        public DashboardController(IStoreRepository storeRepository, ISupplierRepository supplierRepository,
+            ErrorLogService errorLogService)
         {
             _storeRepository = storeRepository;
             _supplierRepository = supplierRepository;
+            _errorLogService = errorLogService;
         }
         public IActionResult GetDashboardDetails()
         {
@@ -38,7 +41,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Dashboard Controller - GetDashboardDetails");
                 return BadRequest(ex.Message);
             }
         }

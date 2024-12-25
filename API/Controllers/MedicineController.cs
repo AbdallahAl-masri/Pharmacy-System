@@ -13,11 +13,14 @@ namespace API.Controllers
     {
         private readonly IMedicineRepository _medicineRepository;
         private readonly IMedicineDepartmentRepository _medicineDepartmentRepository;
+        private readonly ErrorLogService _errorLogService;
 
-        public MedicineController(IMedicineRepository medicineRepository, IMedicineDepartmentRepository medicineDepartmentRepository)
+        public MedicineController(IMedicineRepository medicineRepository, IMedicineDepartmentRepository medicineDepartmentRepository,
+            ErrorLogService errorLogService)
         {
             _medicineRepository = medicineRepository;
             _medicineDepartmentRepository = medicineDepartmentRepository;
+            _errorLogService = errorLogService;
         }
 
         public IActionResult AddNewMedicine(MedicinesDTO medicinesDTO)
@@ -38,7 +41,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - AddNewMedicine");
                 return BadRequest(ex.Message);
             }
         }
@@ -65,7 +68,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - GetAllMedicineDepartments");
                 return BadRequest(ex.Message);
             }
         }
@@ -94,7 +97,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - GetAllMedicine");
                 return BadRequest(ex.Message);
             }
         }
@@ -124,7 +127,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - SearchMedicines");
                 return BadRequest(ex.Message);
             }
         }

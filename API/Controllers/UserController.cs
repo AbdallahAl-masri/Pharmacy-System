@@ -1,10 +1,8 @@
-﻿using Hope.Repository.IRepository;
-using Infrastructure.Base;
+﻿using Infrastructure.Base;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.IRepository;
-using System.Diagnostics;
 
 namespace API.Controllers
 {
@@ -14,16 +12,16 @@ namespace API.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IJobDescriptionRepository _jobDescriptionRepository;
-        private readonly IErrorLogRepository _errorRepository;
+        private readonly ErrorLogService _errorLogService;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly ISectionRepository _sectionRepository;
 
-        public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, IErrorLogRepository errorLogRepository,
+        public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, ErrorLogService errorLogService,
              IDepartmentRepository departmentRepository, ISectionRepository sectionRepository)
         {
             _userRepository = userRepository;
             _jobDescriptionRepository = jobDescriptionRepository;
-            _errorRepository = errorLogRepository;
+            _errorLogService = errorLogService;
             _departmentRepository = departmentRepository;
             _sectionRepository = sectionRepository;
         }
@@ -61,7 +59,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "User Controller - GetAllUsers");
                 return BadRequest(ex.Message);
             }
 
@@ -108,7 +106,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "User Controller - GetUserById");
                 return BadRequest(ex.Message);
             }
         }
@@ -142,7 +140,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "User Controller - AddNewUser");
                 return BadRequest(ex.Message);
             }
 
@@ -174,7 +172,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-
+                _errorLogService.AddErrorLog(ex, "User Controller - UpdateUser");
                 return BadRequest(ex.Message);
             }
         }
@@ -201,22 +199,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                try
-                {
-                    EntitiyComponent.DBEntities.ErrorLog obj = new EntitiyComponent.DBEntities.ErrorLog();
-                    obj.ErrorExeption = ex.InnerException != null ? ex.InnerException.ToString() : "";
-                    obj.ErrorMessage = ex.Message != null ? ex.Message.ToString() : "";
-                    obj.ModuleName = "User - GetAllJobDescriptions";
-                    obj.TransactionDate = DateTime.Now;
-                    _errorRepository.Add(obj);
-                }
-                catch (Exception)
-                {
-                    var appLog = new EventLog("Application");
-                    appLog.Source = "Application";
-                    appLog.WriteEntry("Error Occured in Pharmacy Project", EventLogEntryType.Error);
-                }
-
+                _errorLogService.AddErrorLog(ex, "User Controller - GetAllJobDescriptions");
                 return BadRequest(ex.Message);
             }
         }
@@ -235,6 +218,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.AddErrorLog(ex, "User Controller - Delete");
                 return BadRequest(ex.Message);
             }
         }
@@ -263,40 +247,59 @@ namespace API.Controllers
 
         public IActionResult GetAllDepartments()
         {
-            List<DepartmentDTO> lst = new List<DepartmentDTO>();
-
-            lst = (from obj in _departmentRepository.GetAll()
-                   select new DepartmentDTO
-                   {
-                       DepartmentId = obj.DepartmentId,
-                       DepartmentName = obj.Name,
-                   }).ToList();
-
-            string jsonString = JsonConvert.SerializeObject(lst, Formatting.None, new JsonSerializerSettings
+            try
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+                List<DepartmentDTO> lst = new List<DepartmentDTO>();
 
-            return Ok(jsonString);
+                lst = (from obj in _departmentRepository.GetAll()
+                       select new DepartmentDTO
+                       {
+                           DepartmentId = obj.DepartmentId,
+                           DepartmentName = obj.Name,
+                       }).ToList();
+
+                string jsonString = JsonConvert.SerializeObject(lst, Formatting.None, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+                return Ok(jsonString);
+            }
+            catch (Exception ex)
+            {
+
+                _errorLogService.AddErrorLog(ex, "User Controller - GetAllDepartments");
+                return BadRequest(ex.Message);
+            }
+
         }
 
         public IActionResult GetAllSectionsByDepartmentId(int DepartmentId)
         {
-            List<SectionDTO> lst = new List<SectionDTO>();
-
-            lst = (from obj in _sectionRepository.Find(x => x.DepartmentId == DepartmentId)
-                   select new SectionDTO
-                   {
-                       SectionId = obj.SectionId,
-                       SectionName = obj.SectionName,
-                   }).ToList();
-
-            string jsonString = JsonConvert.SerializeObject(lst, Formatting.None, new JsonSerializerSettings
+            try
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+                List<SectionDTO> lst = new List<SectionDTO>();
 
-            return Ok(jsonString);
+                lst = (from obj in _sectionRepository.Find(x => x.DepartmentId == DepartmentId)
+                       select new SectionDTO
+                       {
+                           SectionId = obj.SectionId,
+                           SectionName = obj.SectionName,
+                       }).ToList();
+
+                string jsonString = JsonConvert.SerializeObject(lst, Formatting.None, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+                return Ok(jsonString);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.AddErrorLog(ex, "User Controller - GetAllSectionsByDepartmentId");
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

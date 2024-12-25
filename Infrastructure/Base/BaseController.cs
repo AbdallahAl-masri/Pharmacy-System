@@ -3,12 +3,12 @@ using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
-
+ 
 namespace Infrastructure.Base
 {
     public class BaseController : Controller
     {
-        public override async void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (IsUserLoggedIn())
             {

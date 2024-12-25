@@ -8,13 +8,14 @@ namespace UI.Controllers
 {
     public class InvoiceController : Controller
     {
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
-            var apiResponse = await response.Content.ReadAsStringAsync();
-            ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponse);
-
+            //HttpClient client = new HttpClient();
+            //var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            //var apiResponse = await response.Content.ReadAsStringAsync();
+            //ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponse);
+            var ReferenceNumber = Guid.NewGuid().ToString("N").ToUpper();
+            ViewBag.ReferenceNumber = ReferenceNumber;
             return View();
         }
 

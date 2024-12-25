@@ -1,8 +1,7 @@
-using Hope.Repository.IRepository;
-using Hope.Repository.Repository;
+using API;
 using Repository;
 using Repository.IRepository;
-using Repository.Ropository;
+using Repository.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +23,8 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<IInvoiceMasterRepository, InvoiceMasterRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailsRepository>();
+builder.Services.AddScoped<ErrorLogService>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors(options =>
 {

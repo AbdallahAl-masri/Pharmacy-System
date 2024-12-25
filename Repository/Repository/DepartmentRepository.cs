@@ -1,9 +1,9 @@
 ﻿using EntitiyComponent.DBEntities;
-using Repository;
+using Repository.IRepository;
 
-namespace Hope.Repository.Repository
+namespace Repository.Repository
 {
-    public class DepartmentRepository : Repository<Department>, IRepository.IDepartmentRepository
+    public class DepartmentRepository : Repository<Department>, IDepartmentRepository
     {
         public DepartmentRepository()
         {

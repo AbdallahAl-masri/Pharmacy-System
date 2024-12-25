@@ -38,7 +38,6 @@ namespace UI.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
-
         }
 
         private async Task<int> checkUser(LoginDTO loginDTO)

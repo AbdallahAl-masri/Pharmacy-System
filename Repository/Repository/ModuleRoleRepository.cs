@@ -1,7 +1,7 @@
 ﻿using EntitiyComponent.DBEntities;
 using Repository.IRepository;
 
-namespace Repository.Ropository
+namespace Repository.Repository
 {
     public class ModuleRoleRepository : Repository<ModuleRole>, IModuleRoleRepository
     {

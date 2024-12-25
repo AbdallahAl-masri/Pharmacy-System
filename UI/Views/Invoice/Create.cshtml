@@ -2,7 +2,6 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-
 }
 @model Infrastructure.DTO.InvoiceDTO;
 <html>
@@ -24,20 +23,20 @@
             z-index: 1000;
         }
 
-        .medicine-list li {
-            padding: 8px;
-            cursor: pointer;
-        }
+            .medicine-list li {
+                padding: 8px;
+                cursor: pointer;
+            }
 
-        .medicine-list li:hover {
-            background-color: #f0f0f0;
-        }
+                .medicine-list li:hover {
+                    background-color: #f0f0f0;
+                }
 
-        .medicine-list .no-result {
-            color: #888;
-            text-align: center;
-            padding: 8px;
-        }
+            .medicine-list .no-result {
+                color: #888;
+                text-align: center;
+                padding: 8px;
+            }
 
     </style>
 
@@ -57,11 +56,11 @@
                                     <div class="row" style="align-content:center; align-items:center;">
                                         <div class="col-md-5">
                                             <label>Reference Number</label>
-                                            <input type="text" asp-for="ReferenceNumber" class="form-control" />
+                                            <input type="text" asp-for="ReferenceNumber" class="form-control" value="@ViewBag.ReferenceNumber" readonly/>
                                         </div>
                                         <div class="col-md-5">
                                             <label>Transaction Date</label>
-                                            <input type="text" asp-for="TransactionDate" class="form-control" readonly value="@DateTime.Now" placeholder="@DateTime.Now" />
+                                            <input type="text" asp-for="TransactionDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly />
                                         </div>
                                     </div>
 
@@ -69,10 +68,6 @@
                                         <div class="col-md-5">
                                             <label>Customer Name</label>
                                             <input type="text" class="form-control" asp-for="CustomerName" />
-                                        </div>
-                                        <div class="col-md-5">
-                                            <label>Discount</label>
-                                            <input type="text" class="form-control" />
                                         </div>
                                     </div>
                                 </fieldset>
@@ -92,13 +87,13 @@
                                             <tr>
                                                 <td>
                                                     <div class="medicine-search-wrapper">
-                                                        <input type="text" class="form-control medicine-search" data-hidden-input-name="InvoiceDetails[${rowCount}].MedicineId" placeholder="Search for medicine..." />
+                                                        <input type="text" class="form-control medicine-search" data-hidden-input-name="InvoiceDetails[0].MedicineId" placeholder="Search for medicine..." />
                                                         <ul class="medicine-list"></ul>
                                                     </div>
                                                 </td>
-                                                <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control" /></td>
-                                                <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control" /></td>
-                                                <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control" readonly /></td>
+                                                <td><input name="InvoiceDetails[0].Qty" type="number" class="form-control Qty" /></td>
+                                                <td><input name="InvoiceDetails[0].SellingPrice" type="number" class="form-control selling-price" /></td>
+                                                <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control total-price" readonly /></td>
                                                 <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
                                             </tr>
                                             <!-- Dynamic rows will be added here -->
@@ -143,9 +138,9 @@
                                 <ul class="medicine-list" style="display: none; position: absolute; z-index: 1000;"></ul>
                             </div>
                         </td>
-                        <td><input name="InvoiceDetails[${rowCount}].Qty" type="number" class="form-control" /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].SellingPrice" type="number" class="form-control" /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control" readonly /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].Qty" type="number" class="form-control Qty" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].SellingPrice" type="number" class="form-control selling-price" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control total-price" readonly /></td>
                         <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
                     </tr>
                 `;
@@ -153,6 +148,9 @@
 
                 // Initialize dropdown functionality for the new input
                 initializeMedicineSearch($("#detailsTable tbody tr:last .medicine-search"));
+
+                // Attach calculation event to new inputs
+                attachCalculationHandlers($("#detailsTable tbody tr:last"));
             });
 
             // Initialize medicine search functionality
@@ -182,7 +180,7 @@
                             $list.show();
                         },
                         error: function () {
-                            alert("Unable to fetch medicines. Please try again.");
+                            $list.empty().append('<li class="no-result">Error fetching medicines. Try again later.</li>').show();
                         },
                     });
                 });
@@ -195,39 +193,52 @@
 
                     $input.val(medicineName);
                     const hiddenInputName = $input.data("hidden-input-name");
-                    if (hiddenInputName) {
+                    if ($(`input[name="${hiddenInputName}"]`).length === 0) {
                         $(`<input type="hidden" name="${hiddenInputName}" value="${medicineId}" />`).appendTo($input.closest("td"));
+                    } else {
+                        $(`input[name="${hiddenInputName}"]`).val(medicineId);
                     }
                     $item.parent().hide().empty();
                 });
             }
 
-            // Remove row and update totals
-            $(document).on("click", ".removeDetail", function () {
-                const rowCount = $("#detailsTable tbody tr").length;
-                if (rowCount === 1) {
-                    const row = $(this).closest("tr");
-                    row.find("input").val("");
-                    row.find("ul.medicine-list").hide();
-                } else {
-                    $(this).closest("tr").remove();
-                }
-                updateGrandTotal();
-            });
+            // Attach calculation events to inputs
+            function attachCalculationHandlers($row) {
+                $row.find(".Qty, .selling-price").on("input", function () {
+                    calculateRowTotal($row);
+                });
+            }
 
-            // Update grand total
-            function updateGrandTotal() {
+            // Calculate row total
+            function calculateRowTotal($row) {
+                const qty = parseFloat($row.find(".Qty").val()) || 0;
+                                const sellingPrice = parseFloat($row.find(".selling-price").val()) || 0;
+                const total = qty * sellingPrice;
+                $row.find(".total-price").val(total.toFixed(2));
+                calculateGrandTotal();
+            }
+
+            // Calculate grand total
+            function calculateGrandTotal() {
                 let grandTotal = 0;
-                $("#detailsTable tbody tr").each(function () {
-                    const total = parseFloat($(this).find("input[name$='TotalPrice']").val()) || 0;
-                    grandTotal += total;
+                $(".total-price").each(function () {
+                    grandTotal += parseFloat($(this).val()) || 0;
                 });
                 $("#grandTotal").val(grandTotal.toFixed(2));
             }
+
+            // Attach calculation events to existing rows
+            $("#detailsTable tbody tr").each(function () {
+                attachCalculationHandlers($(this));
+            });
+
+            // Remove detail row
+            $(document).on("click", ".removeDetail", function () {
+                $(this).closest("tr").remove();
+                calculateGrandTotal();
+            });
         });
-
     </script>
-
 </body>
 </html>
 
