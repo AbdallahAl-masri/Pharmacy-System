@@ -1,5 +1,7 @@
-﻿using EntitiyComponent.DBEntities;
+﻿using API.Services;
+using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
+using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -13,10 +15,10 @@ namespace API.Controllers
     {
         private readonly IMedicineRepository _medicineRepository;
         private readonly IMedicineDepartmentRepository _medicineDepartmentRepository;
-        private readonly ErrorLogService _errorLogService;
+        private readonly IErrorLogService _errorLogService;
 
         public MedicineController(IMedicineRepository medicineRepository, IMedicineDepartmentRepository medicineDepartmentRepository,
-            ErrorLogService errorLogService)
+            IErrorLogService errorLogService)
         {
             _medicineRepository = medicineRepository;
             _medicineDepartmentRepository = medicineDepartmentRepository;

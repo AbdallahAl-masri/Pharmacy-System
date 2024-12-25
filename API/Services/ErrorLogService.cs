@@ -1,11 +1,10 @@
 ﻿using EntitiyComponent.DBEntities;
+using Infrastructure.Helper;
 using Repository.IRepository;
-using System.Diagnostics;
-using System.Security.Claims;
 
-namespace API
+namespace API.Services
 {
-    public class ErrorLogService
+    public class ErrorLogService : IErrorLogService
     {
         private readonly IErrorLogRepository _errorLogRepository;
 

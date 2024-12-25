@@ -1,5 +1,7 @@
-﻿using Infrastructure.Base;
+﻿using API.Services;
+using Infrastructure.Base;
 using Infrastructure.DTO;
+using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.IRepository;
@@ -12,11 +14,11 @@ namespace API.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IJobDescriptionRepository _jobDescriptionRepository;
-        private readonly ErrorLogService _errorLogService;
+        private readonly IErrorLogService _errorLogService;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly ISectionRepository _sectionRepository;
 
-        public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, ErrorLogService errorLogService,
+        public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, IErrorLogService errorLogService,
              IDepartmentRepository departmentRepository, ISectionRepository sectionRepository)
         {
             _userRepository = userRepository;

@@ -1,4 +1,6 @@
-﻿using Infrastructure.DTO;
+﻿using API.Services;
+using Infrastructure.DTO;
+using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.IRepository;
@@ -11,10 +13,10 @@ namespace API.Controllers
     {
         private readonly IStoreRepository _storeRepository;
         private readonly ISupplierRepository _supplierRepository;
-        private readonly ErrorLogService _errorLogService;
+        private readonly IErrorLogService _errorLogService;
 
         public DashboardController(IStoreRepository storeRepository, ISupplierRepository supplierRepository,
-            ErrorLogService errorLogService)
+            IErrorLogService errorLogService)
         {
             _storeRepository = storeRepository;
             _supplierRepository = supplierRepository;

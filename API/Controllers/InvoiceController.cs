@@ -1,5 +1,7 @@
-﻿using EntitiyComponent.DBEntities;
+﻿using API.Services;
+using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
+using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Repository.IRepository;
 namespace API.Controllers
@@ -10,11 +12,11 @@ namespace API.Controllers
         private readonly IInvoiceDetailsRepository _invoiceDetailsRepository;
         private readonly IMedicineRepository _medicineRepository;
         private readonly IStoreRepository _storeRepository;
-        private readonly ErrorLogService _errorLogService;
+        private readonly IErrorLogService _errorLogService;
 
         public InvoiceController(IInvoiceMasterRepository invoiceMasterRepository, IInvoiceDetailsRepository invoiceDetailsRepository,
             IMedicineRepository medicineRepository, IStoreRepository storeRepository,
-            ErrorLogService errorLogService)
+            IErrorLogService errorLogService)
         {
             _invoiceMasterRepository = invoiceMasterRepository;
             _invoiceDetailsRepository = invoiceDetailsRepository;

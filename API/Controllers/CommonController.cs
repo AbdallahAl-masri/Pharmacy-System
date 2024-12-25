@@ -1,4 +1,6 @@
-﻿using Infrastructure.DTO;
+﻿using API.Services;
+using Infrastructure.DTO;
+using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.IRepository;
@@ -12,12 +14,12 @@ namespace API.Controllers
         private readonly IAssignUsersToRoleRepository _assignUsersToRoleRepository;
         private readonly IModuleRoleRepository _moduleRoleRepository;
         private readonly IModuleRepository _moduleRepository;
-        private readonly ErrorLogService _errorLogService;
+        private readonly IErrorLogService _errorLogService;
 
         public CommonController(IAssignUsersToRoleRepository assignUsersToRoleRepository,
             IModuleRoleRepository moduleRoleRepository,
             IModuleRepository moduleRepository,
-            ErrorLogService errorLogService)
+            IErrorLogService errorLogService)
         {
             _assignUsersToRoleRepository = assignUsersToRoleRepository;
             _moduleRoleRepository = moduleRoleRepository;
