@@ -22,6 +22,6 @@ namespace Infrastructure.DTO
 
         //public List<MedicineDepartmentDTO> MedicineDepartmentsList { get; set; }
 
-        public string DepartmentName {  get; set; }
+        public string DepartmentName { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using API.Services;
-using EntitiyComponent.DBEntities;
+﻿using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
@@ -53,10 +52,10 @@ namespace API.Controllers
                     var medicine = _medicineRepository.Find(x => x.MedicineName == detail.MedicineName).FirstOrDefault();
 
                     // Ensure the discount exists for the medicine
-                    var discountInfo = _storeRepository.Find(x => x.MedicineId == medicine.MedicineId).FirstOrDefault();
+                    var store = _storeRepository.Find(x => x.MedicineId == medicine.MedicineId).FirstOrDefault();
 
                     // Calculate total cost
-                    var totalCost = detail.TotalPrice - (detail.Price * discountInfo.MaxDiscount);
+                    var totalCost = detail.TotalPrice - (detail.Price * store.MaxDiscount);
 
                     // Create invoice detail
                     var invoiceDetail = new InvoiceDetail
@@ -70,6 +69,10 @@ namespace API.Controllers
 
                     // Add the invoice detail to the database
                     _invoiceDetailsRepository.Add(invoiceDetail);
+
+                    // Update the Quantity of the Medicine
+                    store.RemainingQty -= detail.Quantity;
+                    _storeRepository.Update(store);
                 }
 
 

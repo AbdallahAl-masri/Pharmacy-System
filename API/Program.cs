@@ -24,7 +24,7 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<IInvoiceMasterRepository, InvoiceMasterRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailsRepository>();
-builder.Services.AddScoped<IErrorLogService,ErrorLogService>();
+builder.Services.AddScoped<IErrorLogService, ErrorLogService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors(options =>

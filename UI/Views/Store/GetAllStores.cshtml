@@ -22,8 +22,11 @@
                                 <th>Medicine Name</th>
                                 <th>Medicine Department</th>
                                 <th>Price</th>
-                                <th>Quantity</th>
+                                <th>Original Quantity</th>
+                                <th>Remaining Quantity</th>
+                                <th>Expiary Date</th>
                                 <th>Description</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,7 +37,20 @@
                                     <td>@item.DepartmentName</td>
                                     <td>@item.CostPrice</td>
                                     <td>@item.OriginalQty</td>
+                                    <td>@item.RemainingQty</td>
+                                    <td>@item.ExpiaryDate</td>
                                     <td>@item.MedicineDescription</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" asp-controller="Store" asp-action="Update" asp-route-Id="@item.StoreId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                <a class="dropdown-item" asp-controller="Store" asp-action="Delete" asp-route-Id="@item.StoreId"><i class="bx bx-trash me-1"></i> Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>

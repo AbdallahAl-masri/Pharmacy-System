@@ -1,9 +1,7 @@
-﻿using API.Services;
-using EntitiyComponent.DBEntities;
+﻿using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Repository.IRepository;
 
@@ -87,7 +85,8 @@ namespace API.Controllers
                                      MedicineId = obj.MedicineId,
                                      MedicineName = obj.MedicineName,
                                      DepartmentName = obj.MedicineDepartment.DepartmentName,
-                                     
+                                     Description = obj.Description,
+
                                  }).ToList();
 
                 string JsonString = JsonConvert.SerializeObject(medicinesDTOs, Formatting.None, new JsonSerializerSettings
@@ -100,30 +99,6 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 _errorLogService.AddErrorLog(ex, "Medicine Controller - GetAllMedicine");
-                return BadRequest(ex.Message);
-            }
-        }
-
-        public IActionResult SearchMedicines(string key)
-        {
-            try
-            {
-                var medicines = _medicineRepository
-                .GetAll()
-                .Where(m => EF.Functions.Like(m.MedicineName, $"%{key}%"))
-                .Select(m => new SearchMedicineDTO
-                {
-                    MedicineName = m.MedicineName,
-                    MedicineId = m.MedicineId,
-                })
-                .Take(10) // Limit results for performance
-                .ToList();
-
-                return Ok(medicines);
-            }
-            catch (Exception ex)
-            {
-                _errorLogService.AddErrorLog(ex, "Medicine Controller - SearchMedicines");
                 return BadRequest(ex.Message);
             }
         }

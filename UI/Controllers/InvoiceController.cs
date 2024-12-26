@@ -27,7 +27,7 @@ namespace UI.Controllers
         public async Task<JsonResult> SearchMedicines(string query)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/SearchMedicines?key=" + query);
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/SearchMedicines?key=" + query);
             var apiReesponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<List<SearchMedicineDTO>>(apiReesponse);
 

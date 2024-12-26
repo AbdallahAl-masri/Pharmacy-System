@@ -1,5 +1,4 @@
 ﻿using EntitiyComponent.DBEntities;
-using Repository;
 using Repository.IRepository;
 
 namespace Repository.Repository

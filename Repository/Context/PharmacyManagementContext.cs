@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using EntitiyComponent.DBEntities;
+﻿using EntitiyComponent.DBEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntitiyComponent;

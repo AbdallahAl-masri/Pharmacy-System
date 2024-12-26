@@ -95,7 +95,7 @@
                                                     </div>
                                                 </td>
                                                 <td><input name="InvoiceDetails[0].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[0].Quantity" /></td>
-                                                <td><input name="InvoiceDetails[0].Price" type="number" step="any" class="form-control price" asp-for="InvoiceDetails[0].Price" /></td>
+                                                <td><input name="InvoiceDetails[0].Price" type="text" class="form-control price" asp-for="InvoiceDetails[0].Price" readonly /></td>
                                                 <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[0].TotalPrice" readonly /></td>
                                                 <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
                                             </tr>
@@ -109,7 +109,7 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                    <input class="btn btn-success" type="button" id="addDetail" value="Add Medicine" />
+                                    <input class="btn btn-secondary" type="button" id="addDetail" value="Add Medicine" />
                                 </fieldset>
                                 <br />
                                 <input type="submit" class="btn btn-primary" value="Save" />
@@ -132,8 +132,8 @@
                     <tr>
                         <td>
                             <div class="medicine-search-wrapper">
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     class="form-control medicine-search"
                                     name="InvoiceDetails[${rowCount}].MedicineName"
                                     asp-for="InvoiceDetails[${rowCount}].MedicineName"
@@ -144,7 +144,7 @@
                             </div>
                         </td>
                         <td><input name="InvoiceDetails[${rowCount}].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[${rowCount}].Quantity" /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].Price" type="number" step="any" class="form-control price" asp-for="InvoiceDetails[${rowCount}].Price" /></td>
+                        <td><input name="InvoiceDetails[${rowCount}].Price" type="text" class="form-control price" asp-for="InvoiceDetails[${rowCount}].Price" readonly /></td>
                         <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[${rowCount}].TotalPrice" readonly /></td>
                         <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
                     </tr>
@@ -179,7 +179,14 @@
                                 $list.append('<li class="no-result">No medicines found</li>');
                             } else {
                                 data.forEach(function (med) {
-                                    $list.append(`<li class="medicine-item" data-id="${med.medicineId}" data-name="${med.medicineName}">${med.medicineName}</li>`);
+                                    debugger;
+                                    $list.append(`<li class="medicine-item"
+                                                    data-id="${med.medicineId}"
+                                                    data-name="${med.medicineName}"
+                                                    data-price="${med.medicinePrice}"
+                                                    data-quantity="${med.medicineQTY}" >
+                                                    ${med.medicineName}
+                                                </li>`);
                                 });
                             }
                             $list.show();
@@ -195,6 +202,10 @@
                     const $item = $(this);
                     const medicineName = $item.data("name");
                     const medicineId = $item.data("id");
+                    const medicinePrice = $item.data("price"); // Retrieve the price from the data attribute
+                    debugger;
+                    const medicineQty = $item.data("quantity"); // Available storage quantity
+
 
                     $input.val(medicineName);
                     const hiddenInputName = $input.data("hidden-input-name");
@@ -203,6 +214,14 @@
                     } else {
                         $(`input[name="${hiddenInputName}"]`).val(medicineId);
                     }
+
+                    // Display the medicine price in the price field
+                    $input.closest("tr").find(".price").val(medicinePrice);
+
+                    // Store available quantity as a data attribute on the row
+                    $input.closest("tr").data("availableQty", medicineQty);
+
+                    // Hide and clear the medicine list
                     $item.parent().hide().empty();
                 });
             }
@@ -217,7 +236,15 @@
             // Calculate row total
             function calculateRowTotal($row) {
                 const qty = parseFloat($row.find(".Qty").val()) || 0;
-                                const sellingPrice = parseFloat($row.find(".price").val()) || 0;
+                const sellingPrice = parseFloat($row.find(".price").val()) || 0;
+                const availableQty = parseFloat($row.data("availableQty"));
+
+                if (qty > availableQty) {
+                    alert(`Entered quantity exceeds the available quantity (${availableQty}) in storage.`);
+                    $row.find(".Qty").val(availableQty); // Reset to available quantity
+                    return;
+                }
+
                 const total = qty * sellingPrice;
                 $row.find(".total-price").val(total.toFixed(2));
                 calculateGrandTotal();
@@ -237,10 +264,18 @@
                 attachCalculationHandlers($(this));
             });
 
-            // Remove detail row
+            // Remove a row or clear values if only one row exists
             $(document).on("click", ".removeDetail", function () {
-                $(this).closest("tr").remove();
-                calculateGrandTotal();
+                let rowCount = $("#detailsTable tbody tr").length;
+                if (rowCount === 1) {
+                    // Clear the values of the only row
+                    let row = $(this).closest("tr");
+                    row.find("input").val('');
+                } else {
+                    // Remove the row
+                    $(this).closest("tr").remove();
+                }
+                updateGrandTotal(); // Update grand total after removing or clearing a row
             });
         });
     </script>

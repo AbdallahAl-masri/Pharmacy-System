@@ -1,7 +1,4 @@
-﻿using EntitiyComponent.DBEntities;
-using System.ComponentModel.DataAnnotations;
-
-namespace Infrastructure.DTO
+﻿namespace Infrastructure.DTO
 {
     public class InvoiceDTO
     {
