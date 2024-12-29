@@ -102,5 +102,78 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        public IActionResult GetMedicineById(int medicineId)
+        {
+            try
+            {
+
+                MedicinesDTO medicine = new MedicinesDTO();
+                medicine = (from m in _medicineRepository.Find(m => m.MedicineId == medicineId)
+                            select new MedicinesDTO
+                            {
+                                MedicineId = m.MedicineId,
+                                MedicineName = m.MedicineName,
+                                DepartmentName = m.MedicineDepartment.DepartmentName,
+                                Description = m.Description,
+                            }).FirstOrDefault();
+
+                string JsonString = JsonConvert.SerializeObject(medicine, Formatting.None, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+                return Ok(JsonString);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - GetMedicineById");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult UpdateMedicine(MedicinesDTO medicinesDTO)
+        {
+            try
+            {
+                Medicine medicine = new Medicine();
+                medicine = _medicineRepository.Find(m => m.MedicineId == medicinesDTO.MedicineId).FirstOrDefault();
+
+                medicine.MedicineName = medicinesDTO.MedicineName;
+                medicine.Description = medicinesDTO.Description;
+                medicine.MedicineDepartmentId = medicinesDTO.MedicineDepartmentId;
+                medicine.ImageFullPath = medicinesDTO.ImageFullPath;
+                medicine.ImageName = medicinesDTO.ImageName;
+                medicine.ImageReadPath = medicinesDTO.ImageReadPath;
+
+                _medicineRepository.Update(medicine);
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - UpdateMedicine");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult DeleteMedicine(int medicineId)
+        {
+            try
+            {
+
+                Medicine medicine = new Medicine();
+                medicine = _medicineRepository.Find(m => m.MedicineId == medicineId).FirstOrDefault();
+
+                _medicineRepository.Delete(medicine);
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.AddErrorLog(ex, "Medicine Controller - Delete");
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

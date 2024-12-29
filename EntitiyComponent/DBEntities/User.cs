@@ -1,4 +1,7 @@
-﻿namespace EntitiyComponent.DBEntities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EntitiyComponent.DBEntities;
 
 public partial class User
 {
@@ -40,11 +43,7 @@ public partial class User
 
     public virtual ICollection<AssignUsersToRole> AssignUsersToRoles { get; set; } = new List<AssignUsersToRole>();
 
-    public virtual Department Deparment { get; set; }
-
     public virtual ICollection<ErrorLog> ErrorLogs { get; set; } = new List<ErrorLog>();
 
     public virtual JobDescription JobDescription { get; set; }
-
-    public virtual Section Section { get; set; }
 }

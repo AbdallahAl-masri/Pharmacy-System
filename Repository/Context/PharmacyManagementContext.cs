@@ -1,4 +1,6 @@
-﻿using EntitiyComponent.DBEntities;
+﻿using System;
+using System.Collections.Generic;
+using EntitiyComponent.DBEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntitiyComponent;
@@ -250,6 +252,8 @@ public partial class PharmacyManagementContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
+            entity.HasIndex(e => e.UserName, "UserName_Unique_Constraint").IsUnique();
+
             entity.Property(e => e.Address)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -268,18 +272,10 @@ public partial class PharmacyManagementContext : DbContext
             entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.UserName).HasMaxLength(50);
 
-            entity.HasOne(d => d.Deparment).WithMany(p => p.Users)
-                .HasForeignKey(d => d.DeparmentId)
-                .HasConstraintName("FK_Users_Department");
-
             entity.HasOne(d => d.JobDescription).WithMany(p => p.Users)
                 .HasForeignKey(d => d.JobDescriptionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_JobDescription");
-
-            entity.HasOne(d => d.Section).WithMany(p => p.Users)
-                .HasForeignKey(d => d.SectionId)
-                .HasConstraintName("FK_Users_Section");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Error";
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -17,23 +18,30 @@
             justify-content: center;
             height: 100vh;
             background-color: #f8f9fa;
+            margin: 0;
         }
+
         .error-container {
             text-align: center;
             background-color: white;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
         }
+
         .error-code {
             font-size: 6rem;
             font-weight: bold;
             color: #dc3545;
         }
+
         .error-message {
             font-size: 1.5rem;
             color: #6c757d;
         }
+
         .error-actions {
             margin-top: 20px;
         }
@@ -43,7 +51,7 @@
     <div class="error-container">
         <div class="error-code">@ViewData["ErrorCode"]</div>
         <div class="error-message">
-            @switch (ViewData["ErrorCode"])
+            @switch ((int)ViewData["ErrorCode"])
             {
                 case 404:
                     <span>Page not found.</span>

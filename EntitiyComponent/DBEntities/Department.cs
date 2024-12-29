@@ -1,4 +1,7 @@
-﻿namespace EntitiyComponent.DBEntities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EntitiyComponent.DBEntities;
 
 public partial class Department
 {
@@ -7,6 +10,4 @@ public partial class Department
     public string Name { get; set; }
 
     public virtual ICollection<Section> Sections { get; set; } = new List<Section>();
-
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

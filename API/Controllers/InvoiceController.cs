@@ -54,8 +54,10 @@ namespace API.Controllers
                     // Ensure the discount exists for the medicine
                     var store = _storeRepository.Find(x => x.MedicineId == medicine.MedicineId).FirstOrDefault();
 
+                    var discount = invoiceDTO.Discount;
+
                     // Calculate total cost
-                    var totalCost = detail.TotalPrice - (detail.Price * store.MaxDiscount);
+                    var totalCost = detail.TotalPrice - (detail.Price * discount);
 
                     // Create invoice detail
                     var invoiceDetail = new InvoiceDetail

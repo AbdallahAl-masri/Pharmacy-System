@@ -20,8 +20,18 @@ namespace UI.Controllers
             HttpClient client = new HttpClient();
             var clientContextDTO = JsonConvert.SerializeObject(invoiceDTO);
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Invoice/AddNewInvoice", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
 
-            return RedirectToAction("GetAllInvoices");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return RedirectToAction("GetAllInvoices");
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
+
         }
 
         public async Task<JsonResult> SearchMedicines(string query)
@@ -38,11 +48,22 @@ namespace UI.Controllers
         {
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Invoice/GetAllInvoices");
-            string apiResponse = await response.Content.ReadAsStringAsync();
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
 
-            var result = JsonConvert.DeserializeObject<List<InvoiceDTO>>(apiResponse);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
 
-            return View(result);
+                var result = JsonConvert.DeserializeObject<List<InvoiceDTO>>(apiResponse);
+
+                return View(result);
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
+
         }
     }
 }

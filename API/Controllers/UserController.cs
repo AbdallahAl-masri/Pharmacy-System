@@ -2,6 +2,8 @@
 using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Repository.IRepository;
 
@@ -87,16 +89,10 @@ namespace API.Controllers
                              Gender = obj.Gender,
                              JobDescriptionId = obj.JobDescriptionId,
                              IsActive = obj.IsActive,
+                             UserName = obj.UserName,
+                             Password = obj.Password,
 
                          }).FirstOrDefault();
-
-                users.JobDescriptionsList = new List<JobDescriptionDTO>();
-                users.JobDescriptionsList = (from obj in _jobDescriptionRepository.GetAll()
-                                             select new JobDescriptionDTO
-                                             {
-                                                 Id = obj.JobDescriptonId,
-                                                 Name = obj.Name
-                                             }).ToList();
 
                 string JsonString = JsonConvert.SerializeObject(users, Formatting.None, new JsonSerializerSettings
                 {
@@ -151,6 +147,7 @@ namespace API.Controllers
         {
             try
             {
+                userDTO.Password = Security.EncryptString(userDTO.Password);
                 EntitiyComponent.DBEntities.User user = new EntitiyComponent.DBEntities.User();
 
                 user = _userRepository.Find(x => x.UserId == userDTO.UserId).FirstOrDefault();
@@ -167,9 +164,15 @@ namespace API.Controllers
                 user.Salary = userDTO.Salary;
                 user.ShiftType = userDTO.ShiftType;
                 user.JobDescriptionId = userDTO.JobDescriptionId;
+                user.Password = userDTO.Password;
+                user.UserName = userDTO.UserName;
 
                 _userRepository.Update(user);
                 return Ok();
+            }
+            catch (DbUpdateException ex)
+            {
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {

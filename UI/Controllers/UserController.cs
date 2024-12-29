@@ -1,4 +1,5 @@
-﻿using Infrastructure.Base;
+﻿using Azure;
+using Infrastructure.Base;
 using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,31 @@ namespace UI.Controllers
         {
             HttpClient client = new HttpClient();
             var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllJobDescriptions");
-            string apiResponseJob = await responseJob.Content.ReadAsStringAsync();
+            System.Net.HttpStatusCode statusCodeJob = responseJob.StatusCode;
+            string apiResponseJob;
+            if (responseJob.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                apiResponseJob = await responseJob.Content.ReadAsStringAsync();
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCodeJob });
+            }
+
 
             var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllDepartments");
-            string apiResponseDept = await responseDept.Content.ReadAsStringAsync();
+            System.Net.HttpStatusCode statusCodeDept = responseDept.StatusCode;
+            string apiResponseDept;
+            if (responseDept.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                apiResponseDept = await responseDept.Content.ReadAsStringAsync();
 
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCodeDept });
+            }
 
 
             ViewBag.JobDescription = JsonConvert.DeserializeObject<List<JobDescriptionDTO>>(apiResponseJob);
@@ -30,12 +51,24 @@ namespace UI.Controllers
         {
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllSectionsByDepartmentId?DepartmentId=" + DeptId);
-            string apiResponse = await response.Content.ReadAsStringAsync();
 
-            List<SectionDTO> lst = JsonConvert.DeserializeObject<List<SectionDTO>>(apiResponse);
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                List<SectionDTO> lst = JsonConvert.DeserializeObject<List<SectionDTO>>(apiResponse);
 
 
-            return Json(lst);
+                return Json(lst);
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
+
 
         }
 
@@ -47,18 +80,40 @@ namespace UI.Controllers
 
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "User/AddNewUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
-            return RedirectToAction("GetAllUsers");
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return RedirectToAction("GetAllUsers");
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
+
         }
 
         public async Task<IActionResult> GetAllUsers()
         {
+
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllUsers");
-            string apiResponse = await response.Content.ReadAsStringAsync();
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
 
-            var result = JsonConvert.DeserializeObject<List<UserDTO>>(apiResponse);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
 
-            return View(result);
+                var result = JsonConvert.DeserializeObject<List<UserDTO>>(apiResponse);
+
+                return View(result);
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
         }
 
         public async Task<IActionResult> Delete(int Id)
@@ -79,13 +134,52 @@ namespace UI.Controllers
         public async Task<IActionResult> Update(int Id)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}User/GetUserById?UserId={Id}");
-            var apiResponse = await response.Content.ReadAsStringAsync();
-            UserDTO userDTO = JsonConvert.DeserializeObject<UserDTO>(apiResponse);
+            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllJobDescriptions");
+            System.Net.HttpStatusCode statusCodeJob = responseJob.StatusCode;
+            string apiResponseJob;
+            if (responseJob.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                apiResponseJob = await responseJob.Content.ReadAsStringAsync();
 
-            ViewBag.JobDescription = userDTO.JobDescriptionsList;
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCodeJob });
+            }
+
+
+            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllDepartments");
+            System.Net.HttpStatusCode statusCodeDept = responseDept.StatusCode;
+            string apiResponseDept;
+            if (responseDept.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                apiResponseDept = await responseDept.Content.ReadAsStringAsync();
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCodeDept });
+            }
+
+            var responseUser = await client.GetAsync($"{ConfigSettings.BaseApiUrl}User/GetUserById?UserId={Id}");
+            System.Net.HttpStatusCode statusCodeUser = responseUser.StatusCode;
+            UserDTO userDTO;
+            if (responseUser.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var apiResponse = await responseUser.Content.ReadAsStringAsync();
+                 userDTO = JsonConvert.DeserializeObject<UserDTO>(apiResponse);
+
+                ViewBag.JobDescription = JsonConvert.DeserializeObject<List<JobDescriptionDTO>>(apiResponseJob);
+                ViewBag.Department = JsonConvert.DeserializeObject<List<DepartmentDTO>>(apiResponseDept);
+
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCodeUser });
+            }
 
             return View(userDTO);
+
         }
 
         public async Task<IActionResult> UpdateUser(UserDTO userDTO)
@@ -95,8 +189,22 @@ namespace UI.Controllers
             var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
 
             var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "User/UpdateUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
 
-            return RedirectToAction("GetAllUsers");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return RedirectToAction("GetAllUsers");
+
+            }
+            else if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                TempData["ErrorMessage"] = "A user with the same username already exists.";
+                return RedirectToAction("Update", new { Id = userDTO.UserId });
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
         }
     }
 }

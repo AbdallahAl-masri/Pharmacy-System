@@ -128,6 +128,7 @@ namespace API.Controllers
                                  MedicineName = m.Medicine.MedicineName,
                                  MedicinePrice = m.SellingPriceAfterTax,
                                  MedicineQTY = m.RemainingQty,
+                                 Discount = m.MaxDiscount,
                              })
                              .Take(10) // Limit results for performance
                              .ToList();

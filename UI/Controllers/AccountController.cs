@@ -33,7 +33,7 @@ namespace UI.Controllers
                     new Claim("UserID", item.ToString())
                 };
                 var identity = new ClaimsIdentity(userClaim, "User Identity");
-                var principal = new ClaimsPrincipal(new[] { identity });
+                var principal = new ClaimsPrincipal(identity);
                 HttpContext.SignInAsync(principal);
 
                 return RedirectToAction("Index", "Home");
@@ -42,7 +42,6 @@ namespace UI.Controllers
 
         private async Task<int> checkUser(LoginDTO loginDTO)
         {
-            Console.WriteLine(ConfigSettings.BaseApiUrl);
             HttpClient client = new HttpClient();
             var LoginContextDTO = JsonConvert.SerializeObject(loginDTO);
 

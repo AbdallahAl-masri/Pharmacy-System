@@ -6,7 +6,7 @@
 @model Infrastructure.DTO.UserDTO;
 <html>
 <head>
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
     <div class="content-wrapper">
@@ -14,7 +14,13 @@
 
         <div class="container-xxl flex-grow-1 container-p-y">
             <h4 class="fw-bold py-3 mb-4">Update User</h4>
-
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             <div class="card">
                 <div class="row">
                     <div class="col-md-12">
@@ -58,9 +64,9 @@
                                     <div class="col-md-4">
                                         Gender
                                         <span class="text-danger">*</span>
-                                        </br>
-                                        <input type="radio" asp-for="Gender" class="radio" value="false" name="Gender" />Male
-                                        <input type="radio" asp-for="Gender" class="radio" value="true" name="Gender" />Female
+                                        <br />
+                                        <input type="radio" asp-for="Gender" class="radio" value="0" name="Gender" />Male
+                                        <input type="radio" asp-for="Gender" class="radio" value="1" name="Gender" />Female
                                         <span asp-validation-for="Gender" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -92,10 +98,43 @@
 
                                 <div class="row">
                                     <div class="col-md-4">
+                                        Department Name
+                                        <span class="text-danger">*</span>
+                                        <select id="DepartmentList" class="form-select" asp-for="DepartmentId" asp-items="@(new SelectList(ViewBag.Department,"DepartmentId","DepartmentName"))">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Section Name
+                                        <span class="text-danger">*</span>
+                                        <select id="SectionList" class="form-select" asp-for="SectionId">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="SectionId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
                                         Job Description
+                                        <span class="text-danger">*</span>
                                         <select class="form-select" asp-for="JobDescriptionId" asp-items="@(new SelectList(ViewBag.JobDescription, "Id", "Name"))">
                                             <option value="" selected="selected">Please Select</option>
                                         </select>
+                                        <span asp-validation-for="JobDescriptionId" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        User Name
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="UserName" class="form-control" />
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Password
+                                        <span class="text-danger">*</span>
+                                        <input type="password" asp-for="Password" class="form-control" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
                                     </div>
                                     <div class="col-md-4">
                                         Join Date
@@ -112,14 +151,36 @@
                                     </div>
                                 </div>
                             </form>
-
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+        $('#DepartmentList').on('change', function () {
+            $.ajax({
+                url: '/User/GetAllSectionByDeptId',
+                type: 'GET',
+                data: { DeptId: $('#DepartmentList').val() },
+                success: function (Result) {
+                    $('#SectionList option').remove();
+                    $('#SectionList').append("<option value=''>Please Select</option>");
+                    $.each(Result, function () {
+                        $('#SectionList').append('<option value=' + this.sectionId + '>' +
+                            this.sectionName + '</option>')
+                    });
+                }
+            });
+        });
+
+        setTimeout(() => {
+            const alert = document.getElementById('errorAlert');
+            if (alert) alert.style.display = 'none';
+        }, 10000);
+    </script>
+
 </body>
 
 @section Scripts {

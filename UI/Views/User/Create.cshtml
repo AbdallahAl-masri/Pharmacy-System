@@ -21,131 +21,130 @@
 
                         <div class="card-body">
                             <form asp-action="AddNewUser">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    First Name
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="FirstName" class="form-control" maxlength="50" />
-                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        First Name
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="FirstName" class="form-control" maxlength="50" />
+                                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Last Name
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="LastName" class="form-control" maxlength="50" />
+                                        <span asp-validation-for="LastName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Date Of Birth
+                                        <span class="text-danger">*</span>
+                                        <input type="date" asp-for="DateOfBirth" class="form-control" />
+                                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    Last Name
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="LastName" class="form-control" maxlength="50" />
-                                    <span asp-validation-for="LastName" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4">
-                                    Date Of Birth
-                                    <span class="text-danger">*</span>
-                                    <input type="date" asp-for="DateOfBirth" class="form-control" />
-                                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-4">
-                                    Email
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="Email" class="form-control" maxlength="50" />
-                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Email
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="Email" class="form-control" maxlength="50" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Mobile
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="Mobilenumber" class="form-control" maxlength="50" />
+                                        <span asp-validation-for="Mobilenumber" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Gender
+                                        <span class="text-danger">*</span>
+                                        </br>
+                                        <input type="radio" asp-for="Gender" class="radio" value="0" name="Gender" />Male
+                                        <input type="radio" asp-for="Gender" class="radio" value="1" name="Gender" />Female
+                                        <span asp-validation-for="Gender" class="text-danger"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    Mobile
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="Mobilenumber" class="form-control" maxlength="50" />
-                                    <span asp-validation-for="Mobilenumber" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4">
-                                    Gender
-                                    <span class="text-danger">*</span>
-                                    </br>
-                                    <input type="radio" asp-for="Gender" class="radio" value="0" name="Gender" />Male
-                                    <input type="radio" asp-for="Gender" class="radio" value="1" name="Gender" />Female
-                                    <span asp-validation-for="Gender" class="text-danger"></span>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-4">
-                                    Address
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="Address" class="form-control" maxlength="50" />
-                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Address
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="Address" class="form-control" maxlength="50" />
+                                        <span asp-validation-for="Address" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Shift Type
+                                        <span class="text-danger">*</span>
+                                        <select class="form-select" asp-for="ShiftType">
+                                            <option selected="selected" value="">Please Select</option>
+                                            <option value="false">Shift A</option>
+                                            <option value="true">Shift B</option>
+                                        </select>
+                                        <span asp-validation-for="ShiftType" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Salary
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="Salary" class="form-control" />
+                                        <span asp-validation-for="Salary" class="text-danger"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    Shift Type
-                                    <span class="text-danger">*</span>
-                                    <select class="form-select" asp-for="ShiftType">
-                                        <option selected="selected" value="">Please Select</option>
-                                        <option value="false">Shift A</option>
-                                        <option value="true">Shift B</option>
-                                    </select>
-                                    <span asp-validation-for="ShiftType" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4">
-                                    Salary
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="Salary" class="form-control" />
-                                    <span asp-validation-for="Salary" class="text-danger"></span>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-4">
-                                    Department Name
-                                    <span class="text-danger">*</span>
-                                    <select id="DepartmentList" class="form-select" asp-for="DepartmentId" asp-items="@(new SelectList(ViewBag.Department,"DepartmentId","DepartmentName"))">
-                                        <option value="" selected="selected">Please Select</option>
-                                    </select>
-                                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Department Name
+                                        <span class="text-danger">*</span>
+                                        <select id="DepartmentList" class="form-select" asp-for="DepartmentId" asp-items="@(new SelectList(ViewBag.Department,"DepartmentId","DepartmentName"))">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Section Name
+                                        <span class="text-danger">*</span>
+                                        <select id="SectionList" class="form-select" asp-for="SectionId">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="SectionId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Job Description
+                                        <span class="text-danger">*</span>
+                                        <select class="form-select" asp-for="JobDescriptionId" asp-items="@(new SelectList(ViewBag.JobDescription, "Id", "Name"))">
+                                            <option value="" selected="selected">Please Select</option>
+                                        </select>
+                                        <span asp-validation-for="JobDescriptionId" class="text-danger"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    Section Name
-                                    <span class="text-danger">*</span>
-                                    <select id="SectionList" class="form-select" asp-for="SectionId">
-                                    </select>
-                                    <span asp-validation-for="SectionId" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4">
-                                    Job Description
-                                    <span class="text-danger">*</span>
-                                    <select class="form-select" asp-for="JobDescriptionId" asp-items="@(new SelectList(ViewBag.JobDescription, "Id", "Name"))">
-                                        <option value="" selected="selected">Please Select</option>
-                                    </select>
-                                    <span asp-validation-for="JobDescriptionId" class="text-danger"></span>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-4">
-                                    User Name
-                                    <span class="text-danger">*</span>
-                                    <input type="text" asp-for="UserName" class="form-control" />
-                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        User Name
+                                        <span class="text-danger">*</span>
+                                        <input type="text" asp-for="UserName" class="form-control" />
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Password
+                                        <span class="text-danger">*</span>
+                                        <input type="password" asp-for="Password" class="form-control" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        Join Date
+                                        <span class="text-danger">*</span>
+                                        <input type="date" asp-for="JoinDate" class="form-control" />
+                                        <span asp-validation-for="JoinDate" class="text-danger"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    Password
-                                    <span class="text-danger">*</span>
-                                    <input type="password" asp-for="Password" class="form-control" />
-                                    <span asp-validation-for="Password" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4">
-                                    Join Date
-                                    <span class="text-danger">*</span>
-                                    <input type="date" asp-for="JoinDate" class="form-control" />
-                                    <span asp-validation-for="JoinDate" class="text-danger"></span>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <input type="submit" value="Save" class="btn btn-primary" />
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="submit" value="Save" class="btn btn-primary" />
+                                    </div>
                                 </div>
-                            </div>
                             </form>
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -153,19 +152,20 @@
     </div>
 
     <script type="text/javascript">
-        $('#DepartmentList').change(function () {
-            debugger;
-            $('#SectionList option').remove();
-            $.getJSON('GetAllSectionByDeptId', { DeptId: $('#DepartmentList').val() },
-                function (Result) {
-                    debugger;
+        $('#DepartmentList').on('change', function () {
+            $.ajax({
+                url: '/User/GetAllSectionByDeptId',
+                type: 'GET',
+                data: { DeptId: $('#DepartmentList').val() },
+                success: function (Result) {
+                    $('#SectionList option').remove();
                     $('#SectionList').append("<option value=''>Please Select</option>");
                     $.each(Result, function () {
                         $('#SectionList').append('<option value=' + this.sectionId + '>' +
                             this.sectionName + '</option>')
                     });
-                });
-
+                }
+            });
         });
     </script>
 

@@ -55,7 +55,6 @@
                         <div class="card-body">
                             <form asp-action="AddNewInvoice" method="post">
                                 <fieldset>
-                                    <legend>Invoice Master</legend>
                                     <div class="row" style="align-content:center; align-items:center;">
                                         <div class="col-md-5">
                                             <label>Reference Number</label>
@@ -72,11 +71,15 @@
                                             <label>Customer Name</label>
                                             <input type="text" class="form-control" asp-for="CustomerName" />
                                         </div>
+                                        <div class="col-md-5">
+                                            <label>Discount</label>
+                                            <input type="text" id="Discount" class="form-control" asp-for="Discount" readonly/>
+                                        </div>
                                     </div>
                                 </fieldset>
 
                                 <fieldset>
-                                    <legend>Invoice Details</legend>
+                                    <hr />
                                     <table id="detailsTable">
                                         <thead>
                                             <tr>
@@ -109,7 +112,7 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                    <input class="btn btn-secondary" type="button" id="addDetail" value="Add Medicine" />
+                                    <input class="btn btn-outline-secondary" type="button" id="addDetail" value="Add Medicine" />
                                 </fieldset>
                                 <br />
                                 <input type="submit" class="btn btn-primary" value="Save" />
@@ -179,12 +182,12 @@
                                 $list.append('<li class="no-result">No medicines found</li>');
                             } else {
                                 data.forEach(function (med) {
-                                    debugger;
                                     $list.append(`<li class="medicine-item"
                                                     data-id="${med.medicineId}"
                                                     data-name="${med.medicineName}"
                                                     data-price="${med.medicinePrice}"
-                                                    data-quantity="${med.medicineQTY}" >
+                                                    data-quantity="${med.medicineQTY}"
+                                                    data-discount="${med.discount}">
                                                     ${med.medicineName}
                                                 </li>`);
                                 });
@@ -202,9 +205,9 @@
                     const $item = $(this);
                     const medicineName = $item.data("name");
                     const medicineId = $item.data("id");
-                    const medicinePrice = $item.data("price"); // Retrieve the price from the data attribute
-                    debugger;
-                    const medicineQty = $item.data("quantity"); // Available storage quantity
+                    const medicinePrice = $item.data("price");
+                    const medicineQty = $item.data("quantity");
+                    const medicineDiscount = $item.data("discount");
 
 
                     $input.val(medicineName);
@@ -217,6 +220,8 @@
 
                     // Display the medicine price in the price field
                     $input.closest("tr").find(".price").val(medicinePrice);
+
+                    $("#Discount").val(medicineDiscount);
 
                     // Store available quantity as a data attribute on the row
                     $input.closest("tr").data("availableQty", medicineQty);

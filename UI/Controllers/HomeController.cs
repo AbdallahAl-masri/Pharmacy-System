@@ -33,9 +33,17 @@ namespace UI.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? code)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (code.HasValue)
+            {
+                ViewData["ErrorCode"] = code;
+            }
+            else
+            {
+                ViewData["ErrorCode"] = "Unknown Error";
+            }
+            return View();
         }
     }
 }
