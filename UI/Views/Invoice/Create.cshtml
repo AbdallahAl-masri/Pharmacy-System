@@ -100,7 +100,7 @@
                                                 <td><input name="InvoiceDetails[0].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[0].Quantity" /></td>
                                                 <td><input name="InvoiceDetails[0].Price" type="text" class="form-control price" asp-for="InvoiceDetails[0].Price" readonly /></td>
                                                 <td><input name="InvoiceDetails[0].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[0].TotalPrice" readonly /></td>
-                                                <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
+                                                <td><button type="button" class="removeDetail btn rounded-pill btn-danger">Remove</button></td>
                                             </tr>
                                             <!-- Dynamic rows will be added here -->
                                         </tbody>
@@ -112,10 +112,10 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                    <input class="btn btn-outline-secondary" type="button" id="addDetail" value="Add Medicine" />
+                                    <input class="btn rounded-pill btn-outline-secondary" type="button" id="addDetail" value="Add Medicine" />
                                 </fieldset>
                                 <br />
-                                <input type="submit" class="btn btn-primary" value="Save" />
+                                <input type="submit" class="btn rounded-pill btn-primary" value="Save" />
                             </form>
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                         <td><input name="InvoiceDetails[${rowCount}].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[${rowCount}].Quantity" /></td>
                         <td><input name="InvoiceDetails[${rowCount}].Price" type="text" class="form-control price" asp-for="InvoiceDetails[${rowCount}].Price" readonly /></td>
                         <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[${rowCount}].TotalPrice" readonly /></td>
-                        <td><button type="button" class="removeDetail btn btn-danger">Remove</button></td>
+                        <td><button type="button" class="removeDetail btn rounded-pill btn-danger">Remove</button></td>
                     </tr>
                 `;
                 $("#detailsTable tbody").append(newRow);

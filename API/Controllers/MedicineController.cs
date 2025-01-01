@@ -23,7 +23,7 @@ namespace API.Controllers
             _errorLogService = errorLogService;
         }
 
-        public IActionResult AddNewMedicine(MedicinesDTO medicinesDTO)
+        public IActionResult AddNewMedicine(MedicineDTO medicinesDTO)
         {
             try
             {
@@ -77,10 +77,10 @@ namespace API.Controllers
         {
             try
             {
-                List<MedicinesDTO> medicinesDTOs = new List<MedicinesDTO>();
+                List<MedicineDTO> medicinesDTOs = new List<MedicineDTO>();
 
                 medicinesDTOs = (from obj in _medicineRepository.GetAll()
-                                 select new MedicinesDTO
+                                 select new MedicineDTO
                                  {
                                      MedicineId = obj.MedicineId,
                                      MedicineName = obj.MedicineName,
@@ -108,9 +108,9 @@ namespace API.Controllers
             try
             {
 
-                MedicinesDTO medicine = new MedicinesDTO();
+                MedicineDTO medicine = new MedicineDTO();
                 medicine = (from m in _medicineRepository.Find(m => m.MedicineId == medicineId)
-                            select new MedicinesDTO
+                            select new MedicineDTO
                             {
                                 MedicineId = m.MedicineId,
                                 MedicineName = m.MedicineName,
@@ -132,7 +132,7 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult UpdateMedicine(MedicinesDTO medicinesDTO)
+        public IActionResult UpdateMedicine(MedicineDTO medicinesDTO)
         {
             try
             {

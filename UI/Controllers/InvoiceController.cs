@@ -2,12 +2,18 @@
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Interfaces;
 using System.Text;
 
 namespace UI.Controllers
 {
     public class InvoiceController : Controller
     {
+        private readonly IInvoiceService _invoiceService;
+        public InvoiceController(IInvoiceService invoiceService)
+        {
+            _invoiceService = invoiceService;
+        }
         public IActionResult Create()
         {
             var ReferenceNumber = Guid.NewGuid().ToString("N").ToUpper();
@@ -17,9 +23,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> AddNewInvoice(InvoiceDTO invoiceDTO)
         {
-            HttpClient client = new HttpClient();
-            var clientContextDTO = JsonConvert.SerializeObject(invoiceDTO);
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Invoice/AddNewInvoice", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _invoiceService.AddNewInvoice(invoiceDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -36,8 +40,7 @@ namespace UI.Controllers
 
         public async Task<JsonResult> SearchMedicines(string query)
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/SearchMedicines?key=" + query);
+            var response = await _invoiceService.SearchMedicines(query);
             var apiReesponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<List<SearchMedicineDTO>>(apiReesponse);
 
@@ -47,7 +50,7 @@ namespace UI.Controllers
         public async Task<IActionResult> GetAllInvoices()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Invoice/GetAllInvoices");
+            var response = await _invoiceService.GetAllInvoices();
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)

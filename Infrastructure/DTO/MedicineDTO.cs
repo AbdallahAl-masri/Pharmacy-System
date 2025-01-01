@@ -2,7 +2,7 @@
 
 namespace Infrastructure.DTO
 {
-    public class MedicinesDTO
+    public class MedicineDTO
     {
         public int MedicineId { get; set; }
 

@@ -3,6 +3,7 @@ using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Interfaces;
 using System.Diagnostics;
 using UI.Models;
 
@@ -10,21 +11,36 @@ namespace UI.Controllers
 {
     public class HomeController : BaseController
     {
+        private readonly IDashboardService _dashboardService;
 
+        public HomeController(IDashboardService dashboardService)
+        {
+            _dashboardService = dashboardService;
+        }
         public async Task<IActionResult> Index()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Dashboard/GetDashboardDetails");
+            var response = await _dashboardService.GetDashboardDetails();
+            System.Net.HttpStatusCode statusCode = response.StatusCode;
 
-            var apiResponse = await response.Content.ReadAsStringAsync();
+            if (statusCode == System.Net.HttpStatusCode.OK)
+            {
+                var apiResponse = await response.Content.ReadAsStringAsync();
 
-            DashboardDTO dashboardDTO = JsonConvert.DeserializeObject<DashboardDTO>(apiResponse);
+                DashboardDTO dashboardDTO = JsonConvert.DeserializeObject<DashboardDTO>(apiResponse);
 
-            ViewBag.SupplierCount = dashboardDTO.SupplierCount;
-            ViewBag.MedicineCount = dashboardDTO.MedicineCount;
+                ViewBag.SupplierCount = dashboardDTO.SupplierCount;
+                ViewBag.MedicineCount = dashboardDTO.MedicineCount;
 
 
-            return View();
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home", new { code = (int)statusCode });
+            }
+
+
         }
 
         public IActionResult Privacy()

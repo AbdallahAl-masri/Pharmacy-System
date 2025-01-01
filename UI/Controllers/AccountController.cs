@@ -3,6 +3,7 @@ using Infrastructure.Helper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Interfaces;
 using System.Security.Claims;
 using System.Text;
 
@@ -10,6 +11,12 @@ namespace UI.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IUserService _userService;
+
+        public AccountController(IUserService userService)
+        {
+            _userService = userService;
+        }
         public IActionResult Login()
         {
             return View();
@@ -42,10 +49,8 @@ namespace UI.Controllers
 
         private async Task<int> checkUser(LoginDTO loginDTO)
         {
-            HttpClient client = new HttpClient();
-            var LoginContextDTO = JsonConvert.SerializeObject(loginDTO);
 
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "User/Login", new StringContent(LoginContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _userService.Login(loginDTO);
 
             var Data = await response.Content.ReadAsStringAsync();
             int id = JsonConvert.DeserializeObject<int>(Data);

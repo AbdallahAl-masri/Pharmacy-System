@@ -3,7 +3,7 @@
 *@
 @{
 }
-@model List<Infrastructure.DTO.MedicinesDTO>;
+@model List<Infrastructure.DTO.MedicineDTO>;
 <div class="content-wrapper">
     <!-- Content -->
 
@@ -26,7 +26,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Infrastructure.DTO.MedicinesDTO item in Model)
+                            @foreach (Infrastructure.DTO.MedicineDTO item in Model)
                             {
                                 <tr>
                                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>@item.MedicineName</strong></td>

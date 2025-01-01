@@ -4,16 +4,23 @@ using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Interfaces;
 using System.Text;
 
 namespace UI.Controllers
 {
     public class UserController : BaseController
     {
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         public async Task<IActionResult> Create()
         {
-            HttpClient client = new HttpClient();
-            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllJobDescriptions");
+            var responseJob = await _userService.GetAllJobDescriptions();
             System.Net.HttpStatusCode statusCodeJob = responseJob.StatusCode;
             string apiResponseJob;
             if (responseJob.StatusCode == System.Net.HttpStatusCode.OK)
@@ -27,7 +34,7 @@ namespace UI.Controllers
             }
 
 
-            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllDepartments");
+            var responseDept = await _userService.GetAllDepartments();
             System.Net.HttpStatusCode statusCodeDept = responseDept.StatusCode;
             string apiResponseDept;
             if (responseDept.StatusCode == System.Net.HttpStatusCode.OK)
@@ -49,8 +56,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> GetAllSectionByDeptId(string DeptId)
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllSectionsByDepartmentId?DepartmentId=" + DeptId);
+            var response = await _userService.GetAllSectionsByDepartmentId(DeptId);
 
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
@@ -74,11 +80,8 @@ namespace UI.Controllers
 
         public async Task<IActionResult> AddNewUser(UserDTO userDTO)
         {
-            HttpClient client = new HttpClient();
 
-            var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
-
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "User/AddNewUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _userService.AddNewUser(userDTO);
 
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
@@ -97,8 +100,7 @@ namespace UI.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
 
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllUsers");
+            var response = await _userService.GetAllUsers();
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -118,8 +120,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> Delete(int Id)
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}User/Delete?id={Id}");
+            var response = await _userService.Delete(Id);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -133,8 +134,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> Update(int Id)
         {
-            HttpClient client = new HttpClient();
-            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllJobDescriptions");
+            var responseJob = await _userService.GetAllJobDescriptions();
             System.Net.HttpStatusCode statusCodeJob = responseJob.StatusCode;
             string apiResponseJob;
             if (responseJob.StatusCode == System.Net.HttpStatusCode.OK)
@@ -148,7 +148,7 @@ namespace UI.Controllers
             }
 
 
-            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllDepartments");
+            var responseDept = await _userService.GetAllDepartments();
             System.Net.HttpStatusCode statusCodeDept = responseDept.StatusCode;
             string apiResponseDept;
             if (responseDept.StatusCode == System.Net.HttpStatusCode.OK)
@@ -161,7 +161,7 @@ namespace UI.Controllers
                 return RedirectToAction("Error", "Home", new { code = (int)statusCodeDept });
             }
 
-            var responseUser = await client.GetAsync($"{ConfigSettings.BaseApiUrl}User/GetUserById?UserId={Id}");
+            var responseUser = await _userService.GetUserById(Id);
             System.Net.HttpStatusCode statusCodeUser = responseUser.StatusCode;
             UserDTO userDTO;
             if (responseUser.StatusCode == System.Net.HttpStatusCode.OK)
@@ -184,11 +184,8 @@ namespace UI.Controllers
 
         public async Task<IActionResult> UpdateUser(UserDTO userDTO)
         {
-            HttpClient client = new HttpClient();
 
-            var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
-
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "User/UpdateUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _userService.UpdateUser(userDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)

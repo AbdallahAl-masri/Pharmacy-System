@@ -4,16 +4,22 @@ using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Interfaces;
 using System.Text;
 
 namespace UI.Controllers
 {
     public class StoreController : BaseController
     {
+        private readonly IStoreService _storeService;
+        public StoreController(IStoreService storeService) 
+        {
+            _storeService = storeService;
+        }
+
         public async Task<IActionResult> Create()
         {
-            HttpClient client = new HttpClient();
-            var responseSupplier = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllSupplier");
+            var responseSupplier = await _storeService.GetAllSupplier();
             System.Net.HttpStatusCode statusCodeSupplier = responseSupplier.StatusCode;
 
             if (responseSupplier.StatusCode == System.Net.HttpStatusCode.OK)
@@ -27,13 +33,13 @@ namespace UI.Controllers
                 return RedirectToAction("Error", "Home", new { code = (int)statusCodeSupplier });
             }
 
-            var responseMedicine = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            var responseMedicine = await _storeService.GetAllMedicine();
             System.Net.HttpStatusCode statusCodeMedicine = responseMedicine.StatusCode;
 
             if (responseMedicine.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var apiResponseMedicine = await responseMedicine.Content.ReadAsStringAsync();
-                ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponseMedicine);
+                ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicineDTO>>(apiResponseMedicine);
 
                 return View();
 
@@ -47,9 +53,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> AddNewStore(StoreDTO storeDTO)
         {
-            HttpClient client = new HttpClient();
-            var clientContextDTO = JsonConvert.SerializeObject(storeDTO);
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Store/AddNewStore", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _storeService.AddNewStore(storeDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -66,8 +70,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> GetAllStores()
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllStores");
+            var response = await _storeService.GetAllStores();
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -87,8 +90,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> Delete(int Id)
         {
-            HttpClient client = new HttpClient();
-            var response = await client.DeleteAsync(ConfigSettings.BaseApiUrl + "Store/Delete?StoreId=" + Id);
+            var response = await _storeService.Delete(Id);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -104,8 +106,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> Update(int Id)
         {
-            HttpClient client = new HttpClient();
-            var responseSupplier = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllSupplier");
+            var responseSupplier = await _storeService.GetAllSupplier();
             System.Net.HttpStatusCode statusCode = responseSupplier.StatusCode;
 
             if (responseSupplier.StatusCode == System.Net.HttpStatusCode.OK)
@@ -119,13 +120,13 @@ namespace UI.Controllers
                 return RedirectToAction("Error", "Home", new { code = (int)statusCode });
             }
 
-            var responseMedicine = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            var responseMedicine = await _storeService.GetAllMedicine();
             statusCode = responseMedicine.StatusCode;
 
             if (responseMedicine.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var apiResponseMedicine = await responseMedicine.Content.ReadAsStringAsync();
-                ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponseMedicine);
+                ViewBag.Medicines = JsonConvert.DeserializeObject<List<MedicineDTO>>(apiResponseMedicine);
 
             }
             else
@@ -133,7 +134,7 @@ namespace UI.Controllers
                 return RedirectToAction("Error", "Home", new { code = (int)statusCode });
             }
 
-            var responseStore = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetStoreById?StoreId=" + Id);
+            var responseStore = await _storeService.GetStoreById(Id);
             statusCode = responseStore.StatusCode;
 
             if (responseStore.StatusCode == System.Net.HttpStatusCode.OK)
@@ -154,11 +155,8 @@ namespace UI.Controllers
 
         public async Task<IActionResult> UpdateStore(StoreDTO store)
         {
-            HttpClient client = new HttpClient();
 
-            var ClientContextDTO = JsonConvert.SerializeObject(store);
-
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "Store/UpdateStore", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _storeService.UpdateStore(store);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)

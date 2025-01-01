@@ -4,6 +4,7 @@ using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -11,10 +12,16 @@ namespace UI.Controllers
 {
     public class MedicineController : BaseController
     {
+        private readonly IMedicineService _medicineService;
+
+        public MedicineController(IMedicineService mediicineService)
+        {
+            _medicineService = mediicineService;
+        }
+
         public async Task<IActionResult> Create()
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicineDepartments");
+            var response = await _medicineService.GetAllMedicineDepartments();
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -35,7 +42,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> AddNewMedicine(MedicineImage medicineImageDTO)
         {
-            MedicinesDTO medicinesDTO = new MedicinesDTO();
+            MedicineDTO medicineDTO = new MedicineDTO();
             if (medicineImageDTO.Image != null)
             {
                 string fileName = Path.GetFileName(medicineImageDTO.Image.FileName);
@@ -46,21 +53,17 @@ namespace UI.Controllers
                     medicineImageDTO.Image.CopyTo(stream);
                 }
 
-                medicinesDTO.ImageFullPath = uploadPath;
-                medicinesDTO.ImageName = fileName;
-                medicinesDTO.ImageReadPath = ReadPath;
+                medicineDTO.ImageFullPath = uploadPath;
+                medicineDTO.ImageName = fileName;
+                medicineDTO.ImageReadPath = ReadPath;
 
             }
 
-            medicinesDTO.MedicineName = medicineImageDTO.MedicineName;
-            medicinesDTO.MedicineDepartmentId = medicineImageDTO.MedicineDepartmentId;
-            medicinesDTO.Description = medicineImageDTO.Description;
+            medicineDTO.MedicineName = medicineImageDTO.MedicineName;
+            medicineDTO.MedicineDepartmentId = medicineImageDTO.MedicineDepartmentId;
+            medicineDTO.Description = medicineImageDTO.Description;
 
-            HttpClient client = new HttpClient();
-
-            var ClientContextDTO = JsonConvert.SerializeObject(medicinesDTO);
-
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Medicine/AddNewMedicine", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await _medicineService.AddNewMedicine(medicineDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -77,14 +80,13 @@ namespace UI.Controllers
 
         public async Task<IActionResult> GetAllMedicines()
         {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            var response = await _medicineService.GetAllMedicines();
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var apiResponse = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<MedicinesDTO>>(apiResponse);
+                var result = JsonConvert.DeserializeObject<List<MedicineDTO>>(apiResponse);
 
                 return View(result);
 
@@ -98,8 +100,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> Update(int Id)
         {
-            HttpClient client = new HttpClient();
-            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicineDepartments");
+            var responseDept = await _medicineService.GetAllMedicineDepartments();
             System.Net.HttpStatusCode statusCodeDept = responseDept.StatusCode;
 
             if (responseDept.StatusCode == System.Net.HttpStatusCode.OK)
@@ -114,7 +115,7 @@ namespace UI.Controllers
                 return RedirectToAction("Error", "Home", new { code = (int)statusCodeDept });
             }
 
-            var responseMedicine = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetMedicineById?medicineId=" + Id);
+            var responseMedicine = await _medicineService.GetMedicineById(Id);
             System.Net.HttpStatusCode statusCodeMedicine = responseMedicine.StatusCode;
 
             if (responseMedicine.StatusCode == System.Net.HttpStatusCode.OK)
@@ -135,7 +136,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> UpdateMedicine(MedicineImage medicineImageDTO)
         {
-            MedicinesDTO medicinesDTO = new MedicinesDTO();
+            MedicineDTO medicineDTO = new MedicineDTO();
             if (medicineImageDTO.Image != null)
             {
                 string fileName = Path.GetFileName(medicineImageDTO.Image.FileName);
@@ -146,18 +147,17 @@ namespace UI.Controllers
                     medicineImageDTO.Image.CopyTo(stream);
                 }
 
-                medicinesDTO.ImageFullPath = uploadPath;
-                medicinesDTO.ImageName = fileName;
-                medicinesDTO.ImageReadPath = ReadPath;
+                medicineDTO.ImageFullPath = uploadPath;
+                medicineDTO.ImageName = fileName;
+                medicineDTO.ImageReadPath = ReadPath;
 
             }
-            medicinesDTO.MedicineId = medicineImageDTO.MedicineId;
-            medicinesDTO.MedicineName = medicineImageDTO.MedicineName;
-            medicinesDTO.MedicineDepartmentId = medicineImageDTO.MedicineDepartmentId;
-            medicinesDTO.Description = medicineImageDTO.Description;
-            HttpClient client = new HttpClient();
-            var clientContextDTO = JsonConvert.SerializeObject(medicinesDTO);
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "Medicine/UpdateMedicine", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            medicineDTO.MedicineId = medicineImageDTO.MedicineId;
+            medicineDTO.MedicineName = medicineImageDTO.MedicineName;
+            medicineDTO.MedicineDepartmentId = medicineImageDTO.MedicineDepartmentId;
+            medicineDTO.Description = medicineImageDTO.Description;
+
+            var response = await _medicineService.UpdateMedicine(medicineDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -174,8 +174,7 @@ namespace UI.Controllers
 
         public async Task<IActionResult> Delete(int Id)
         {
-            HttpClient client = new HttpClient();
-            var response = await client.DeleteAsync(ConfigSettings.BaseApiUrl + "Medicine/DeleteMedicine?medicineId=" + Id);
+            var response = await _medicineService.DeleteMedicine(Id);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
