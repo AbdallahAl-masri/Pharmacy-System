@@ -10,12 +10,6 @@ public partial class Medicine
 
     public string Description { get; set; }
 
-    public string ImageName { get; set; }
-
-    public string ImageFullPath { get; set; }
-
-    public string ImageReadPath { get; set; }
-
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
 
     public virtual MedicineDepartment MedicineDepartment { get; set; }

@@ -37,28 +37,8 @@ namespace UI.Controllers
 
         }
 
-        public async Task<IActionResult> AddNewMedicine(MedicineImage medicineImageDTO)
+        public async Task<IActionResult> AddNewMedicine(MedicineDTO medicineDTO)
         {
-            MedicineDTO medicineDTO = new MedicineDTO();
-            if (medicineImageDTO.Image != null)
-            {
-                string fileName = Path.GetFileName(medicineImageDTO.Image.FileName);
-                string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-                string ReadPath = "http://localhost:5130/" + "images/" + fileName;
-                using (var stream = new FileStream(uploadPath, FileMode.Create))
-                {
-                    medicineImageDTO.Image.CopyTo(stream);
-                }
-
-                medicineDTO.ImageFullPath = uploadPath;
-                medicineDTO.ImageName = fileName;
-                medicineDTO.ImageReadPath = ReadPath;
-
-            }
-
-            medicineDTO.MedicineName = medicineImageDTO.MedicineName;
-            medicineDTO.MedicineDepartmentId = medicineImageDTO.MedicineDepartmentId;
-            medicineDTO.Description = medicineImageDTO.Description;
 
             var response = await _medicineService.AddNewMedicine(medicineDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
@@ -119,7 +99,7 @@ namespace UI.Controllers
             {
                 var apiResponseMedicine = await responseMedicine.Content.ReadAsStringAsync();
 
-                MedicineImage medicine = JsonConvert.DeserializeObject<MedicineImage>(apiResponseMedicine);
+                MedicineDTO medicine = JsonConvert.DeserializeObject<MedicineDTO>(apiResponseMedicine);
 
                 return View(medicine);
 
@@ -131,28 +111,8 @@ namespace UI.Controllers
 
         }
 
-        public async Task<IActionResult> UpdateMedicine(MedicineImage medicineImageDTO)
+        public async Task<IActionResult> UpdateMedicine(MedicineDTO medicineDTO)
         {
-            MedicineDTO medicineDTO = new MedicineDTO();
-            if (medicineImageDTO.Image != null)
-            {
-                string fileName = Path.GetFileName(medicineImageDTO.Image.FileName);
-                string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-                string ReadPath = "http://localhost:5130/" + "images/" + fileName;
-                using (var stream = new FileStream(uploadPath, FileMode.Create))
-                {
-                    medicineImageDTO.Image.CopyTo(stream);
-                }
-
-                medicineDTO.ImageFullPath = uploadPath;
-                medicineDTO.ImageName = fileName;
-                medicineDTO.ImageReadPath = ReadPath;
-
-            }
-            medicineDTO.MedicineId = medicineImageDTO.MedicineId;
-            medicineDTO.MedicineName = medicineImageDTO.MedicineName;
-            medicineDTO.MedicineDepartmentId = medicineImageDTO.MedicineDepartmentId;
-            medicineDTO.Description = medicineImageDTO.Description;
 
             var response = await _medicineService.UpdateMedicine(medicineDTO);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
@@ -166,7 +126,6 @@ namespace UI.Controllers
             {
                 return RedirectToAction("Error", "Home", new { code = (int)statusCode });
             }
-
         }
 
         public async Task<IActionResult> Delete(int Id)
@@ -181,22 +140,6 @@ namespace UI.Controllers
             {
                 return View();
             }
-        }
-
-        public class MedicineImage
-        {
-            public int MedicineId { get; set; }
-
-            [Required(AllowEmptyStrings = false, ErrorMessage = "This field is required")]
-            public string MedicineName { get; set; }
-
-            [Required(AllowEmptyStrings = false, ErrorMessage = "This field is required")]
-            public int MedicineDepartmentId { get; set; }
-
-            [Required(AllowEmptyStrings = false, ErrorMessage = "This field is required")]
-            public string Description { get; set; }
-
-            public IFormFile Image { get; set; }
         }
     }
 }

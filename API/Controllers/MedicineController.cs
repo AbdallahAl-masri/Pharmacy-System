@@ -33,9 +33,6 @@ namespace API.Controllers
                 obj.MedicineName = medicinesDTO.MedicineName;
                 obj.MedicineDepartmentId = medicinesDTO.MedicineDepartmentId;
                 obj.Description = medicinesDTO.Description;
-                obj.ImageReadPath = medicinesDTO.ImageReadPath;
-                obj.ImageFullPath = medicinesDTO.ImageFullPath;
-                obj.ImageName = medicinesDTO.ImageName;
 
                 _medicineRepository.Add(obj);
                 return Ok();
@@ -151,9 +148,6 @@ namespace API.Controllers
                 medicine.MedicineName = medicinesDTO.MedicineName;
                 medicine.Description = medicinesDTO.Description;
                 medicine.MedicineDepartmentId = medicinesDTO.MedicineDepartmentId;
-                medicine.ImageFullPath = medicinesDTO.ImageFullPath;
-                medicine.ImageName = medicinesDTO.ImageName;
-                medicine.ImageReadPath = medicinesDTO.ImageReadPath;
 
                 _medicineRepository.Update(medicine);
                 return Ok();

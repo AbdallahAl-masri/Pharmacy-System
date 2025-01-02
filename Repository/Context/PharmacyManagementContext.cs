@@ -146,9 +146,6 @@ public partial class PharmacyManagementContext : DbContext
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.ImageFullPath).HasMaxLength(250);
-            entity.Property(e => e.ImageName).HasMaxLength(50);
-            entity.Property(e => e.ImageReadPath).HasMaxLength(150);
             entity.Property(e => e.MedicineName)
                 .IsRequired()
                 .HasMaxLength(50);
