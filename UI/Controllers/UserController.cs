@@ -90,6 +90,11 @@ namespace UI.Controllers
                 return RedirectToAction("GetAllUsers");
 
             }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                TempData["ErrorMessage"] = "A user with the same username already exists.";
+                return RedirectToAction("Update", new { Id = userDTO.UserId });
+            }
             else
             {
                 return RedirectToAction("Error", "Home", new { code = (int)statusCode });

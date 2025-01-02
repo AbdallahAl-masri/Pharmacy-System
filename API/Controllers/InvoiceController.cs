@@ -8,7 +8,7 @@ using Repository.IRepository;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/invoice")]
     public class InvoiceController : Controller
     {
         private readonly IInvoiceMasterRepository _invoiceMasterRepository;
@@ -27,8 +27,10 @@ namespace API.Controllers
             _storeRepository = storeRepository;
             _errorLogService = errorLogService;
         }
+
+
         [HttpPost]
-        public IActionResult AddNewInvoice(InvoiceDTO invoiceDTO)
+        public IActionResult AddInvoice(InvoiceDTO invoiceDTO)
         {
 
             try
@@ -87,7 +89,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllInvoices()
+
+        [HttpGet]
+        public IActionResult GetInvoices()
         {
             try
             {

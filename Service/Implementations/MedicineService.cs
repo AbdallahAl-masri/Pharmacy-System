@@ -15,7 +15,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllMedicineDepartments()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicineDepartments");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "medicine/departments");
 
             return response;
         }
@@ -25,7 +25,7 @@ namespace Service.Implementations
             HttpClient client = new HttpClient();
             var ClientContextDTO = JsonConvert.SerializeObject(medicineDTO);
 
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Medicine/AddNewMedicine", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "medicine", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }
@@ -33,7 +33,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllMedicines()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "medicine");
 
             return response;
         }
@@ -41,7 +41,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetMedicineById(int Id)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetMedicineById?medicineId=" + Id);
+            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}medicine/{Id}");
 
             return response;
         }
@@ -50,7 +50,7 @@ namespace Service.Implementations
         {
             HttpClient client = new HttpClient();
             var clientContextDTO = JsonConvert.SerializeObject(medicineDTO);
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "Medicine/UpdateMedicine", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "medicine", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }
@@ -58,7 +58,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> DeleteMedicine(int Id)
         {
             HttpClient client = new HttpClient();
-            var response = await client.DeleteAsync(ConfigSettings.BaseApiUrl + "Medicine/DeleteMedicine?medicineId=" + Id);
+            var response = await client.DeleteAsync(ConfigSettings.BaseApiUrl + "medicine?medicineId=" + Id);
 
             return response;
 

@@ -38,7 +38,7 @@ namespace Infrastructure.Base
                 id = Convert.ToInt32(ViewBag.UserId);
 
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}Common/GetAllPermissionsByUsertId?UserId={id}");
+            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}common?UserId={id}");
 
             var Data = await response.Content.ReadAsStringAsync();
             MenuPermissionsDTO menuPermissionsDTO = new MenuPermissionsDTO();
@@ -47,14 +47,16 @@ namespace Infrastructure.Base
             return PartialView("_ManageMenu", menuPermissionsDTO);
         }
 
-        public async Task<IActionResult> GetAllServices(string SearchWord)
+        public async Task<JsonResult> GetUserName()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Common/GetAllServices?Key=" + SearchWord);
+            int userId = Convert.ToInt32(ViewBag.UserId);
+            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}users/{userId}");
+            var apiResponse = await response.Content.ReadAsStringAsync();
 
-            var Data = await response.Content.ReadAsStringAsync();
-            List<ServicesDTO> lst = JsonConvert.DeserializeObject<List<ServicesDTO>>(Data);
-            return Json(lst.ToList());
+            var resault = JsonConvert.DeserializeObject<UserDTO>(apiResponse);
+
+            return Json(resault.FirstName + " " + resault.LastName);
         }
     }
 }

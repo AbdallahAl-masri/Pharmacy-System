@@ -7,7 +7,7 @@ using Repository.IRepository;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/dashboard")]
     public class DashboardController : Controller
     {
         private readonly IStoreRepository _storeRepository;
@@ -21,6 +21,8 @@ namespace API.Controllers
             _supplierRepository = supplierRepository;
             _errorLogService = errorLogService;
         }
+
+        [HttpGet]
         public IActionResult GetDashboardDetails()
         {
             try

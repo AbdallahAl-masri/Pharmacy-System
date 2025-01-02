@@ -8,7 +8,7 @@ using Repository.IRepository;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/medicine")]
     public class MedicineController : Controller
     {
         private readonly IMedicineRepository _medicineRepository;
@@ -23,7 +23,8 @@ namespace API.Controllers
             _errorLogService = errorLogService;
         }
 
-        public IActionResult AddNewMedicine(MedicineDTO medicinesDTO)
+        [HttpPost]
+        public IActionResult AddMedicine(MedicineDTO medicinesDTO)
         {
             try
             {
@@ -46,7 +47,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllMedicineDepartments()
+
+        [HttpGet("departments")]
+        public IActionResult GetMedicineDepartments()
         {
             try
             {
@@ -73,7 +76,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllMedicine()
+
+        [HttpGet]
+        public IActionResult GetMedicines()
         {
             try
             {
@@ -103,7 +108,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetMedicineById(int medicineId)
+
+        [HttpGet("{medicineId}")]
+        public IActionResult GetMedicine(int medicineId)
         {
             try
             {
@@ -132,6 +139,8 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpPut]
         public IActionResult UpdateMedicine(MedicineDTO medicinesDTO)
         {
             try
@@ -157,6 +166,8 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpDelete]
         public IActionResult DeleteMedicine(int medicineId)
         {
             try

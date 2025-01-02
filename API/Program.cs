@@ -1,6 +1,5 @@
 using API.Services;
 using Infrastructure.Helper;
-using Repository;
 using Repository.IRepository;
 using Repository.Repository;
 
@@ -9,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJobDescriptionRepository, JobDescriptionRepository>();
 builder.Services.AddScoped<IErrorLogRepository, ErrorLogRepository>();
@@ -25,7 +24,7 @@ builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<IInvoiceMasterRepository, InvoiceMasterRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailsRepository>();
 builder.Services.AddScoped<IErrorLogService, ErrorLogService>();
-builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddCors(options =>
 {

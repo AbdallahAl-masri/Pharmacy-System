@@ -7,7 +7,7 @@ using Repository.IRepository;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/common")]
     public class CommonController : Controller
     {
         private readonly IAssignUsersToRoleRepository _assignUsersToRoleRepository;
@@ -26,7 +26,8 @@ namespace API.Controllers
             _errorLogService = errorLogService;
         }
 
-        public IActionResult GetAllPermissionsByUsertId(int UserId)
+        [HttpGet]
+        public IActionResult GetPermissionsByUserId(int UserId)
         {
             try
             {
@@ -54,33 +55,6 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
 
-        }
-
-        public IActionResult GetAllServices(string Key)
-        {
-
-            try
-            {
-                List<ServicesDTO> servicesDTOs = (from x in _moduleRepository.Find(x => x.ModuleName.Contains(Key))
-                                                  select new ServicesDTO
-                                                  {
-                                                      Name = x.ModuleName,
-                                                      URL = x.MuduleUrl,
-                                                  }).ToList();
-
-                string jsonString = JsonConvert.SerializeObject(servicesDTOs, Formatting.None, new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
-
-                return Ok(jsonString);
-            }
-            catch (Exception ex)
-            {
-
-                _errorLogService.AddErrorLog(ex, "Common Controller - GetAllServices");
-                return BadRequest(ex.Message);
-            }
         }
     }
 }

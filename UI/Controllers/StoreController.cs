@@ -112,7 +112,7 @@ namespace UI.Controllers
             if (responseSupplier.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var apiResponseSupplier = await responseSupplier.Content.ReadAsStringAsync();
-                ViewBag.Suppliers = JsonConvert.DeserializeObject<List<SupplierDTO>>(apiResponseSupplier); string apiResponse = await responseSupplier.Content.ReadAsStringAsync();
+                ViewBag.Suppliers = JsonConvert.DeserializeObject<List<SupplierDTO>>(apiResponseSupplier);
 
             }
             else

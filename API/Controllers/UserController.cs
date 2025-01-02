@@ -10,7 +10,7 @@ using Repository.IRepository;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/users")]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
@@ -29,7 +29,9 @@ namespace API.Controllers
             _sectionRepository = sectionRepository;
         }
 
-        public IActionResult GetAllUsers()
+
+        [HttpGet]
+        public IActionResult GetUsers()
         {
             try
             {
@@ -68,7 +70,9 @@ namespace API.Controllers
 
         }
 
-        public IActionResult GetUserById(int UserId)
+
+        [HttpGet("{UserId}")]
+        public IActionResult GetUser(int UserId)
         {
             try
             {
@@ -108,7 +112,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult AddNewUser(UserDTO userDTO)
+
+        [HttpPost]
+        public IActionResult AddUser(UserDTO userDTO)
         {
             try
             {
@@ -135,6 +141,10 @@ namespace API.Controllers
                 _userRepository.Add(user);
                 return Ok();
             }
+            catch (DbUpdateException ex)
+            {
+                return Conflict(ex.Message);
+            }
             catch (Exception ex)
             {
                 _errorLogService.AddErrorLog(ex, "User Controller - AddNewUser");
@@ -143,6 +153,8 @@ namespace API.Controllers
 
         }
 
+
+        [HttpPut]
         public IActionResult UpdateUser(UserDTO userDTO)
         {
             try
@@ -181,7 +193,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllJobDescriptions()
+
+        [HttpGet("job")]
+        public IActionResult GetJobDescriptions()
         {
             try
             {
@@ -208,6 +222,8 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpDelete]
         public IActionResult Delete(int Id)
         {
 
@@ -227,6 +243,8 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpPost("login")]
         public IActionResult Login(LoginDTO loginDTO)
         {
             var result = _userRepository.Find(x => x.UserName.Equals(loginDTO.UserName)).FirstOrDefault();
@@ -249,7 +267,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllDepartments()
+
+        [HttpGet("departments")]
+        public IActionResult GetDepartments()
         {
             try
             {
@@ -278,6 +298,8 @@ namespace API.Controllers
 
         }
 
+
+        [HttpGet("sections")]
         public IActionResult GetAllSectionsByDepartmentId(int DepartmentId)
         {
             try

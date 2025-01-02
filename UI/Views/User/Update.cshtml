@@ -6,7 +6,7 @@
 @model Infrastructure.DTO.UserDTO;
 <html>
 <head>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <title>Update User</title>
 </head>
 <body>
     <div class="content-wrapper">
@@ -157,30 +157,7 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript">
-        $('#DepartmentList').on('change', function () {
-            $.ajax({
-                url: '/User/GetAllSectionByDeptId',
-                type: 'GET',
-                data: { DeptId: $('#DepartmentList').val() },
-                success: function (Result) {
-                    $('#SectionList option').remove();
-                    $('#SectionList').append("<option value=''>Please Select</option>");
-                    $.each(Result, function () {
-                        $('#SectionList').append('<option value=' + this.sectionId + '>' +
-                            this.sectionName + '</option>')
-                    });
-                }
-            });
-        });
-
-        setTimeout(() => {
-            const alert = document.getElementById('errorAlert');
-            if (alert) alert.style.display = 'none';
-        }, 10000);
-    </script>
-
+    <script src="~/js/user.js"></script>
 </body>
 
 @section Scripts {

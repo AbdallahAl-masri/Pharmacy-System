@@ -4,73 +4,81 @@
 @{
 }
 @model List<Infrastructure.DTO.InvoiceDTO>;
-<div class="content-wrapper">
-    <!-- Content -->
+<html>
+    <head>
+        <title>All Bills</title>
+    </head>
+    <body>
+    <div class="content-wrapper">
+        <!-- Content -->
 
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">View All Bills</h4>
-        <div class="row CustomAdd" style="text-align:right; margin-top:-60px; padding-bottom:10px">
-            <a href="~/Invoice/Create"><i class="fa fa-plus" aria-hidden="true"></i>Add New Bill</a>
-        </div>
-        <!-- Hoverable Table rows -->
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive text-nowrap">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Reference Number</th>
-                                <th>Transaction Date</th>
-                                <th>Customer Name</th>
-                                <th>Grand Total</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var invoice in Model)
-                            {
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <h4 class="fw-bold py-3 mb-4">View All Bills</h4>
+            <div class="row CustomAdd" style="text-align:right; margin-top:-60px; padding-bottom:10px">
+                <a href="~/Invoice/Create"><i class="fa fa-plus" aria-hidden="true"></i>Add New Bill</a>
+            </div>
+            <!-- Hoverable Table rows -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td>@invoice.ReferenceNumber</td>
-                                    <td>@invoice.TransactionDate.ToString("yyyy-MM-dd")</td>
-                                    <td>@invoice.CustomerName</td>
-                                    <td>@invoice.GrandTotal.ToString("C")</td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#details-@invoice.ReferenceNumber" aria-expanded="false">
-                                            View Details
-                                        </button>
-                                    </td>
+                                    <th>Reference Number</th>
+                                    <th>Transaction Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Grand Total</th>
+                                    <th>Details</th>
                                 </tr>
-                                <tr class="collapse" id="details-@invoice.ReferenceNumber">
-                                    <td colspan="5">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Medicine Name</th>
-                                                    <th>Quantity</th>
-                                                    <th>Price</th>
-                                                    <th>Total Price</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var detail in invoice.InvoiceDetails)
-                                                {
+                            </thead>
+                            <tbody>
+                                @foreach (var invoice in Model)
+                                {
+                                    <tr>
+                                        <td>@invoice.ReferenceNumber</td>
+                                        <td>@invoice.TransactionDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@invoice.CustomerName</td>
+                                        <td>@invoice.GrandTotal.ToString("C")</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#details-@invoice.ReferenceNumber" aria-expanded="false">
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse" id="details-@invoice.ReferenceNumber">
+                                        <td colspan="5">
+                                            <table class="table table-sm">
+                                                <thead>
                                                     <tr>
-                                                        <td>@detail.MedicineName</td>
-                                                        <td>@detail.Quantity</td>
-                                                        <td>@detail.Price.ToString("C")</td>
-                                                        <td>@detail.TotalPrice.ToString("C")</td>
+                                                        <th>Medicine Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>Total Price</th>
                                                     </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var detail in invoice.InvoiceDetails)
+                                                    {
+                                                        <tr>
+                                                            <td>@detail.MedicineName</td>
+                                                            <td>@detail.Quantity</td>
+                                                            <td>@detail.Price.ToString("C")</td>
+                                                            <td>@detail.TotalPrice.ToString("C")</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </body>
+</html>
+
 

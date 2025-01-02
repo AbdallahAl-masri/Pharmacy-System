@@ -5,73 +5,80 @@
 @{
 }
 @model List<Infrastructure.DTO.UserDTO>;
-<div class="content-wrapper">
-    <!-- Content -->
+<html>
+    <head>
+        <title>All Users</title>
+    </head>
+    <body>
+    <div class="content-wrapper">
+        <!-- Content -->
 
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">View All Usres</h4>
-        <div class="row CustomAdd" style="text-align:right; margin-top:-60px; padding-bottom:10px">
-            <a href="~/User/Create"><i class="fa fa-plus" aria-hidden="true"></i>Add New User</a>
-        </div>
-        <!-- Hoverable Table rows -->
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive text-nowrap">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Mobile Number</th>
-                                <th>Join Date</th>
-                                <th>Status</th>
-                                <th>Shift Type</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-border-bottom-0">
-                            @foreach(UserDTO item in Model)
-                            {
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <h4 class="fw-bold py-3 mb-4">View All Usres</h4>
+            <div class="row CustomAdd" style="text-align:right; margin-top:-60px; padding-bottom:10px">
+                <a href="~/User/Create"><i class="fa fa-plus" aria-hidden="true"></i>Add New User</a>
+            </div>
+            <!-- Hoverable Table rows -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>@item.FirstName</strong></td>
-                                    <td>@item.LastName</td>
-                                    <td>
-                                        @item.Email
-                                    </td>
-                                    <td>@item.Mobilenumber</td>
-                                    <td>@item.JoinDate.ToString("dd-MMM-yyyy")</td>
-                                    @if(@item.IsActive)
-                                    {
-                                        <td>
-                                            <span class="badge bg-label-success me-1">Active</span>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                    <td>
-                                        <span class="badge bg-label-danger me-1">InActive</span>
-                                    </td>
-                                    }
-                                    <td>@item.ShiftTypeName</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                                <i class="bx bx-dots-vertical-rounded"></i>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" asp-controller="User" asp-action="Update" asp-route-Id="@item.UserId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                <a class="dropdown-item" asp-controller="User" asp-action="Delete" asp-route-Id="@item.UserId"><i class="bx bx-trash me-1"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile Number</th>
+                                    <th>Join Date</th>
+                                    <th>Status</th>
+                                    <th>Shift Type</th>
+                                    <th>Actions</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                                @foreach (UserDTO item in Model)
+                                {
+                                    <tr>
+                                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>@item.FirstName</strong></td>
+                                        <td>@item.LastName</td>
+                                        <td>
+                                            @item.Email
+                                        </td>
+                                        <td>@item.Mobilenumber</td>
+                                        <td>@item.JoinDate.ToString("dd-MMM-yyyy")</td>
+                                        @if (@item.IsActive)
+                                        {
+                                            <td>
+                                                <span class="badge bg-label-success me-1">Active</span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <span class="badge bg-label-danger me-1">InActive</span>
+                                            </td>
+                                        }
+                                        <td>@item.ShiftTypeName</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" asp-controller="User" asp-action="Update" asp-route-Id="@item.UserId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item" asp-controller="User" asp-action="Delete" asp-route-Id="@item.UserId"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            <!--/ Hoverable Table rows -->
         </div>
-        <!--/ Hoverable Table rows -->
     </div>
-</div>
+    </body>
+</html>

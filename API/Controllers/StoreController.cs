@@ -9,7 +9,7 @@ using Repository.IRepository;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/store")]
     public class StoreController : Controller
     {
         private readonly IStoreRepository _storeRepository;
@@ -24,6 +24,8 @@ namespace API.Controllers
             _errorLogService = errorLogService;
         }
 
+
+        [HttpPost]
         public IActionResult AddNewStore(StoreDTO storeDTO)
         {
 
@@ -54,7 +56,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllStores()
+
+        [HttpGet]
+        public IActionResult GetStores()
         {
             try
             {
@@ -87,7 +91,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetAllSupplier()
+
+        [HttpGet("supplier")]
+        public IActionResult GetSupplier()
         {
             try
             {
@@ -114,6 +120,8 @@ namespace API.Controllers
 
         }
 
+
+        [HttpGet("search")]
         public IActionResult SearchMedicines(string key)
         {
 
@@ -142,7 +150,9 @@ namespace API.Controllers
             }
         }
 
-        public IActionResult GetStoreById(int StoreId)
+
+        [HttpGet("{StoreId}")]
+        public IActionResult GetStore(int StoreId)
         {
             try
             {
@@ -179,6 +189,8 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpPut]
         public IActionResult UpdateStore(StoreDTO storeDTO)
         {
             try
@@ -208,6 +220,8 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpDelete]
         public IActionResult Delete(int StoreId)
         {
             try

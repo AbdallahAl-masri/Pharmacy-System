@@ -1,4 +1,5 @@
-﻿using Infrastructure.DTO;
+﻿using EntitiyComponent.DBEntities;
+using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -16,7 +17,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllJobDescriptions()
         {
             HttpClient client = new HttpClient();
-            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllJobDescriptions");
+            var responseJob = await client.GetAsync(ConfigSettings.BaseApiUrl + "users/job");
 
             return responseJob;
         }
@@ -24,7 +25,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllDepartments()
         {
             HttpClient client = new HttpClient();
-            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllDepartments");
+            var responseDept = await client.GetAsync(ConfigSettings.BaseApiUrl + "users/departments");
 
             return responseDept;
         }
@@ -32,7 +33,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllSectionsByDepartmentId(string DeptId)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllSectionsByDepartmentId?DepartmentId=" + DeptId);
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "users/sections?DepartmentId=" + DeptId);
 
             return response;
         }
@@ -42,7 +43,7 @@ namespace Service.Implementations
             HttpClient client = new HttpClient();
             var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
 
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "User/AddNewUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "users", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }
@@ -50,7 +51,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllUsers()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "User/GetAllUsers");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "users");
 
             return response;
         }
@@ -58,7 +59,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetUserById(int Id)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}User/GetUserById?UserId={Id}");
+            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}users/{Id}");
 
             return response;
         }
@@ -66,7 +67,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> Delete(int Id)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync($"{ConfigSettings.BaseApiUrl}User/Delete?id={Id}");
+            var response = await client.DeleteAsync($"{ConfigSettings.BaseApiUrl}users?id={Id}");
 
             return response;
         }
@@ -75,7 +76,7 @@ namespace Service.Implementations
         {
             var ClientContextDTO = JsonConvert.SerializeObject(userDTO);
             HttpClient client = new HttpClient();
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "User/UpdateUser", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "users", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }
@@ -85,7 +86,7 @@ namespace Service.Implementations
             HttpClient client = new HttpClient();
             var LoginContextDTO = JsonConvert.SerializeObject(loginDTO);
 
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "User/Login", new StringContent(LoginContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "users/login", new StringContent(LoginContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }

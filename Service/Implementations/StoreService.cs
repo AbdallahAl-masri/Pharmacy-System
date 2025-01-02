@@ -16,7 +16,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllSupplier()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllSupplier");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "store/supplier");
 
             return response;
         }
@@ -24,7 +24,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllMedicine()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Medicine/GetAllMedicine");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "medicine");
 
             return response;
         }
@@ -33,7 +33,7 @@ namespace Service.Implementations
         {
             HttpClient client = new HttpClient();
             var clientContextDTO = JsonConvert.SerializeObject(storeDTO);
-            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "Store/AddNewStore", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "store", new StringContent(clientContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }
@@ -41,7 +41,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetAllStores()
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetAllStores");
+            var response = await client.GetAsync(ConfigSettings.BaseApiUrl + "store");
 
             return response;
         }
@@ -49,7 +49,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> GetStoreById(int Id)
         {
             HttpClient client = new HttpClient();
-            var responseStore = await client.GetAsync(ConfigSettings.BaseApiUrl + "Store/GetStoreById?StoreId=" + Id);
+            var responseStore = await client.GetAsync($"{ConfigSettings.BaseApiUrl}store/{Id}");
 
             return responseStore;
         }
@@ -57,7 +57,7 @@ namespace Service.Implementations
         public async Task<HttpResponseMessage> Delete(int Id)
         {
             HttpClient client = new HttpClient();
-            var response = await client.DeleteAsync(ConfigSettings.BaseApiUrl + "Store/Delete?StoreId=" + Id);
+            var response = await client.DeleteAsync(ConfigSettings.BaseApiUrl + "store?StoreId=" + Id);
 
             return response;
         }
@@ -67,7 +67,7 @@ namespace Service.Implementations
             HttpClient client = new HttpClient();
             var ClientContextDTO = JsonConvert.SerializeObject(storeDTO);
 
-            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "Store/UpdateStore", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
+            var response = await client.PutAsync(ConfigSettings.BaseApiUrl + "store", new StringContent(ClientContextDTO, Encoding.UTF8, "application/json"));
 
             return response;
         }

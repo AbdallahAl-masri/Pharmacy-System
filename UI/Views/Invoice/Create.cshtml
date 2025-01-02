@@ -7,6 +7,7 @@
 <html>
 <head>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <title>New Bill</title>
 
     <style>
         .medicine-list {
@@ -23,20 +24,20 @@
             z-index: 1000;
         }
 
-            .medicine-list li {
-                padding: 8px;
-                cursor: pointer;
-            }
+        .medicine-list li {
+            padding: 8px;
+            cursor: pointer;
+        }
 
-                .medicine-list li:hover {
-                    background-color: #f0f0f0;
-                }
+        .medicine-list li:hover {
+            background-color: #f0f0f0;
+        }
 
-            .medicine-list .no-result {
-                color: #888;
-                text-align: center;
-                padding: 8px;
-            }
+        .medicine-list .no-result {
+            color: #888;
+            text-align: center;
+            padding: 8px;
+        }
 
     </style>
 
@@ -112,7 +113,9 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                    <input class="btn rounded-pill btn-outline-secondary" type="button" id="addDetail" value="Add Medicine" />
+                                    <button class="btn rounded-pill btn-outline-secondary" id="addDetail">
+                                        <i class="fa fa-plus"></i> Add Medicine
+                                    </button>
                                 </fieldset>
                                 <br />
                                 <input type="submit" class="btn rounded-pill btn-primary" value="Save" />
@@ -123,167 +126,7 @@
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            // Initialize the default field
-            initializeMedicineSearch($(".medicine-search"));
-
-            // Add new rows dynamically with dropdown functionality
-            $("#addDetail").click(function () {
-                const rowCount = $("#detailsTable tbody tr").length;
-                const newRow = `
-                    <tr>
-                        <td>
-                            <div class="medicine-search-wrapper">
-                                <input
-                                    type="text"
-                                    class="form-control medicine-search"
-                                    name="InvoiceDetails[${rowCount}].MedicineName"
-                                    asp-for="InvoiceDetails[${rowCount}].MedicineName"
-                                    data-hidden-input-name="InvoiceDetails[0].MedicineId"
-                                    placeholder="Search for medicine..."
-                                    />
-                                <ul class="medicine-list" style="display: none; position: absolute; z-index: 1000;"></ul>
-                            </div>
-                        </td>
-                        <td><input name="InvoiceDetails[${rowCount}].Quantity" type="number" class="form-control Qty" asp-for="InvoiceDetails[${rowCount}].Quantity" /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].Price" type="text" class="form-control price" asp-for="InvoiceDetails[${rowCount}].Price" readonly /></td>
-                        <td><input name="InvoiceDetails[${rowCount}].TotalPrice" type="number" class="form-control total-price" asp-for="InvoiceDetails[${rowCount}].TotalPrice" readonly /></td>
-                        <td><button type="button" class="removeDetail btn rounded-pill btn-danger">Remove</button></td>
-                    </tr>
-                `;
-                $("#detailsTable tbody").append(newRow);
-
-                // Initialize dropdown functionality for the new input
-                initializeMedicineSearch($("#detailsTable tbody tr:last .medicine-search"));
-
-                // Attach calculation event to new inputs
-                attachCalculationHandlers($("#detailsTable tbody tr:last"));
-            });
-
-            // Initialize medicine search functionality
-            function initializeMedicineSearch($input) {
-                $input.on("input", function () {
-                    const query = $(this).val().trim();
-                    const $list = $(this).siblings(".medicine-list");
-
-                    if (query.length === 0) {
-                        $list.hide().empty();
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '@Url.Content("/Invoice/SearchMedicines")',
-                        type: "GET",
-                        data: { query },
-                        success: function (data) {
-                            $list.empty();
-                            if (data.length === 0) {
-                                $list.append('<li class="no-result">No medicines found</li>');
-                            } else {
-                                data.forEach(function (med) {
-                                    $list.append(`<li class="medicine-item"
-                                                    data-id="${med.medicineId}"
-                                                    data-name="${med.medicineName}"
-                                                    data-price="${med.medicinePrice}"
-                                                    data-quantity="${med.medicineQTY}"
-                                                    data-discount="${med.discount}">
-                                                    ${med.medicineName}
-                                                </li>`);
-                                });
-                            }
-                            $list.show();
-                        },
-                        error: function () {
-                            $list.empty().append('<li class="no-result">Error fetching medicines. Try again later.</li>').show();
-                        },
-                    });
-                });
-
-                // Handle item selection
-                $input.siblings(".medicine-list").on("click", ".medicine-item", function () {
-                    const $item = $(this);
-                    const medicineName = $item.data("name");
-                    const medicineId = $item.data("id");
-                    const medicinePrice = $item.data("price");
-                    const medicineQty = $item.data("quantity");
-                    const medicineDiscount = $item.data("discount");
-
-
-                    $input.val(medicineName);
-                    const hiddenInputName = $input.data("hidden-input-name");
-                    if ($(`input[name="${hiddenInputName}"]`).length === 0) {
-                        $(`<input type="hidden" name="${hiddenInputName}" value="${medicineId}" />`).appendTo($input.closest("td"));
-                    } else {
-                        $(`input[name="${hiddenInputName}"]`).val(medicineId);
-                    }
-
-                    // Display the medicine price in the price field
-                    $input.closest("tr").find(".price").val(medicinePrice);
-
-                    $("#Discount").val(medicineDiscount);
-
-                    // Store available quantity as a data attribute on the row
-                    $input.closest("tr").data("availableQty", medicineQty);
-
-                    // Hide and clear the medicine list
-                    $item.parent().hide().empty();
-                });
-            }
-
-            // Attach calculation events to inputs
-            function attachCalculationHandlers($row) {
-                $row.find(".Qty, .price").on("input", function () {
-                    calculateRowTotal($row);
-                });
-            }
-
-            // Calculate row total
-            function calculateRowTotal($row) {
-                const qty = parseFloat($row.find(".Qty").val()) || 0;
-                const sellingPrice = parseFloat($row.find(".price").val()) || 0;
-                const availableQty = parseFloat($row.data("availableQty"));
-
-                if (qty > availableQty) {
-                    alert(`Entered quantity exceeds the available quantity (${availableQty}) in storage.`);
-                    $row.find(".Qty").val(availableQty); // Reset to available quantity
-                    return;
-                }
-
-                const total = qty * sellingPrice;
-                $row.find(".total-price").val(total.toFixed(2));
-                calculateGrandTotal();
-            }
-
-            // Calculate grand total
-            function calculateGrandTotal() {
-                let grandTotal = 0;
-                $(".total-price").each(function () {
-                    grandTotal += parseFloat($(this).val()) || 0;
-                });
-                $("#grandTotal").val(grandTotal.toFixed(2));
-            }
-
-            // Attach calculation events to existing rows
-            $("#detailsTable tbody tr").each(function () {
-                attachCalculationHandlers($(this));
-            });
-
-            // Remove a row or clear values if only one row exists
-            $(document).on("click", ".removeDetail", function () {
-                let rowCount = $("#detailsTable tbody tr").length;
-                if (rowCount === 1) {
-                    // Clear the values of the only row
-                    let row = $(this).closest("tr");
-                    row.find("input").val('');
-                } else {
-                    // Remove the row
-                    $(this).closest("tr").remove();
-                }
-                updateGrandTotal(); // Update grand total after removing or clearing a row
-            });
-        });
-    </script>
+    <script src="~/js/invoice.js"></script>
 </body>
 </html>
 
