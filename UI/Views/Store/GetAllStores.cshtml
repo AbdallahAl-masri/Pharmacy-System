@@ -5,10 +5,10 @@
 }
 @model List<Infrastructure.DTO.StoreDTO>;
 <html>
-    <head>
-        <title>All Storage</title>
-    </head>
-    <body>
+<head>
+    <title>All Storage</title>
+</head>
+<body>
     <div class="content-wrapper">
         <!-- Content -->
 
@@ -25,12 +25,13 @@
                             <thead>
                                 <tr>
                                     <th>Medicine Name</th>
-                                    <th>Medicine Department</th>
+                                    @*  *@
                                     <th>Price</th>
-                                    <th>Original Quantity</th>
-                                    <th>Remaining Quantity</th>
+                                    @*  *@
+                                    @*  *@
                                     <th>Expiary Date</th>
-                                    <th>Description</th>
+                                    <th>Remaining Quantity</th>
+                                    <th>Details</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -39,12 +40,14 @@
                                 {
                                     <tr>
                                         <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>@item.MedicineName</strong></td>
-                                        <td>@item.DepartmentName</td>
                                         <td>@item.CostPrice</td>
-                                        <td>@item.OriginalQty</td>
+                                        <td>@item.ExpiaryDate.ToString("dd/MMM/yyyy")</td>
                                         <td>@item.RemainingQty</td>
-                                        <td>@item.ExpiaryDate</td>
-                                        <td>@item.MedicineDescription</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#details-@item.StoreId" aria-expanded="false">
+                                                View Details
+                                            </button>
+                                        </td>
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -57,6 +60,29 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr class="collapse" id="details-@item.StoreId">
+                                        <td colspan="5">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Medicine Department</th>
+                                                        <th>Original Quantity</th>
+                                                        <th>Production Date</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>@item.DepartmentName</td>
+                                                        <td>@item.OriginalQty</td>
+                                                        <td>@item.ProductionDate.ToString("dd/MMM/yyyy")</td>
+                                                        <td>@item.MedicineDescription</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <br />
+                                        </td>
+                                    </tr>
                                 }
                             </tbody>
                         </table>
@@ -65,5 +91,5 @@
             </div>
         </div>
     </div>
-    </body>
+</body>
 </html>

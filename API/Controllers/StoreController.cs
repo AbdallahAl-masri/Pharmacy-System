@@ -75,6 +75,7 @@ namespace API.Controllers
                               MedicineName = obj.Medicine.MedicineName,
                               RemainingQty = obj.RemainingQty,
                               ExpiaryDate = obj.ExpiaryDate,
+                              ProductionDate = obj.ProductionDate,
 
                           }).ToList();
                 string JsonString = JsonConvert.SerializeObject(stores, Formatting.None, new JsonSerializerSettings
