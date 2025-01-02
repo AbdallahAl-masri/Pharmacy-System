@@ -1,11 +1,9 @@
 ﻿using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
 using System.Security.Claims;
-using System.Text;
 
 namespace UI.Controllers
 {

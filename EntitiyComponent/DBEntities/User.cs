@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EntitiyComponent.DBEntities;
+﻿namespace EntitiyComponent.DBEntities;
 
 public partial class User
 {

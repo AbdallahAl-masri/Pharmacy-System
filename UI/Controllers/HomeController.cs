@@ -1,11 +1,8 @@
 using Infrastructure.Base;
 using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
-using System.Diagnostics;
-using UI.Models;
 
 namespace UI.Controllers
 {

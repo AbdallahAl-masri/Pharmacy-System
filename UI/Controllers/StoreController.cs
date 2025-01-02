@@ -1,18 +1,15 @@
-﻿using Azure;
-using Infrastructure.Base;
+﻿using Infrastructure.Base;
 using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
-using System.Text;
 
 namespace UI.Controllers
 {
     public class StoreController : BaseController
     {
         private readonly IStoreService _storeService;
-        public StoreController(IStoreService storeService) 
+        public StoreController(IStoreService storeService)
         {
             _storeService = storeService;
         }
@@ -168,7 +165,7 @@ namespace UI.Controllers
             {
                 return RedirectToAction("Error", "Home", new { code = (int)statusCode });
             }
-            
+
         }
     }
 }

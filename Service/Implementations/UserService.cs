@@ -1,18 +1,12 @@
-﻿using EntitiyComponent.DBEntities;
-using Infrastructure.DTO;
+﻿using Infrastructure.DTO;
 using Infrastructure.Helper;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Implementations
 {
-    public  class UserService : IUserService
+    public class UserService : IUserService
     {
         public async Task<HttpResponseMessage> GetAllJobDescriptions()
         {

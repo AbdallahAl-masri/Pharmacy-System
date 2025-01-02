@@ -1,11 +1,8 @@
-﻿using Azure;
-using Infrastructure.Base;
+﻿using Infrastructure.Base;
 using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
-using System.Text;
 
 namespace UI.Controllers
 {
@@ -172,7 +169,7 @@ namespace UI.Controllers
             if (responseUser.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var apiResponse = await responseUser.Content.ReadAsStringAsync();
-                 userDTO = JsonConvert.DeserializeObject<UserDTO>(apiResponse);
+                userDTO = JsonConvert.DeserializeObject<UserDTO>(apiResponse);
 
                 ViewBag.JobDescription = JsonConvert.DeserializeObject<List<JobDescriptionDTO>>(apiResponseJob);
                 ViewBag.Department = JsonConvert.DeserializeObject<List<DepartmentDTO>>(apiResponseDept);
@@ -198,7 +195,7 @@ namespace UI.Controllers
                 return RedirectToAction("GetAllUsers");
 
             }
-            else if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
                 TempData["ErrorMessage"] = "A user with the same username already exists.";
                 return RedirectToAction("Update", new { Id = userDTO.UserId });
