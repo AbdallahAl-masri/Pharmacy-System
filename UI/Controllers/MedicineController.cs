@@ -1,4 +1,5 @@
-﻿using Infrastructure.Base;
+﻿using Common;
+using Infrastructure.Base;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ namespace UI.Controllers
     {
         private readonly IMedicineService _medicineService;
 
-        public MedicineController(IMedicineService mediicineService)
+        public MedicineController(IJwtService jwtService, IMedicineService mediicineService) : base(jwtService)
         {
             _medicineService = mediicineService;
         }

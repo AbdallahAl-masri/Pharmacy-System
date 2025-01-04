@@ -1,3 +1,4 @@
+using Common;
 using Infrastructure.Base;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +11,14 @@ namespace UI.Controllers
     {
         private readonly IDashboardService _dashboardService;
 
-        public HomeController(IDashboardService dashboardService)
+        public HomeController(IJwtService jwtService,IDashboardService dashboardService) : base(jwtService)
         {
             _dashboardService = dashboardService;
         }
         public async Task<IActionResult> Index()
         {
-            HttpClient client = new HttpClient();
-            var response = await _dashboardService.GetDashboardDetails();
+            var token = Request.Cookies["AuthToken"];
+            var response = await _dashboardService.GetDashboardDetails(token);
             System.Net.HttpStatusCode statusCode = response.StatusCode;
 
             if (statusCode == System.Net.HttpStatusCode.OK)

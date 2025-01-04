@@ -1,5 +1,5 @@
 ﻿
-namespace Infrastructure.Helper
+namespace Service.Interfaces
 {
     public interface IErrorLogService
     {

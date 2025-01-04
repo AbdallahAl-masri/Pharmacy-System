@@ -14,6 +14,8 @@ public partial class PharmacyManagementContext : DbContext
     {
     }
 
+    public virtual DbSet<ActiveSession> ActiveSessions { get; set; }
+
     public virtual DbSet<AssignUsersToRole> AssignUsersToRoles { get; set; }
 
     public virtual DbSet<Department> Departments { get; set; }
@@ -50,6 +52,17 @@ public partial class PharmacyManagementContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ActiveSession>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__ActiveSe__1788CC4C7F9AD39E");
+
+            entity.Property(e => e.UserId).HasMaxLength(50);
+            entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
+            entity.Property(e => e.SessionId)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
         modelBuilder.Entity<AssignUsersToRole>(entity =>
         {
             entity.HasKey(e => e.AssignUserToRoleId);

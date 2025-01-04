@@ -1,4 +1,5 @@
-﻿using Infrastructure.DTO;
+﻿using Common;
+using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,27 +9,29 @@ namespace Infrastructure.Base
 {
     public class BaseController : Controller
     {
-        public override void OnActionExecuting(ActionExecutingContext context)
+        private readonly IJwtService _jwtService;
+
+        public BaseController(IJwtService jwtService)
         {
-            if (IsUserLoggedIn())
-            {
-                ViewBag.UserId = HttpContext.User.Claims.Where(x => x.Type == "UserID").FirstOrDefault().Value;
-            }
-            else
-            {
-                context.Result = RedirectToAction("Login", "Account");
-            }
+            _jwtService = jwtService;
         }
 
-        private bool IsUserLoggedIn()
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var result = HttpContext.User.Claims.Where(x => x.Type == "UserID").FirstOrDefault();
-
-            if (result != null)
+            var token = Request.Cookies["AuthToken"];
+            if (!string.IsNullOrEmpty(token) && _jwtService.ValidateToken(token, out var claimsPrincipal))
             {
-                return true;
+                var userIdClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "UserID");
+                if (userIdClaim != null)
+                {
+                    ViewBag.UserId = userIdClaim.Value;
+                    base.OnActionExecuting(context);
+                    return;
+                }
             }
-            return false;
+
+            // If no valid token or no UserID claim, redirect to login
+            context.Result = RedirectToAction("Login", "Account");
         }
 
         public async Task<IActionResult> GetAllPermissionsByUsertId()

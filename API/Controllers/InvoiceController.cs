@@ -1,10 +1,10 @@
 ﻿using EntitiyComponent.DBEntities;
 using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Repository.IRepository;
+using Service.Interfaces;
 namespace API.Controllers
 {
     [ApiController]

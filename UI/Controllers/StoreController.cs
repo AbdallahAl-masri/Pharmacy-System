@@ -1,4 +1,5 @@
-﻿using Infrastructure.Base;
+﻿using Common;
+using Infrastructure.Base;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -9,7 +10,7 @@ namespace UI.Controllers
     public class StoreController : BaseController
     {
         private readonly IStoreService _storeService;
-        public StoreController(IStoreService storeService)
+        public StoreController(IJwtService jwtService, IStoreService storeService) : base(jwtService)
         {
             _storeService = storeService;
         }

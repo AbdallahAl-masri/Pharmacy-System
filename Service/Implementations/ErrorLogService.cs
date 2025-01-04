@@ -1,8 +1,8 @@
 ﻿using EntitiyComponent.DBEntities;
-using Infrastructure.Helper;
 using Repository.IRepository;
+using Service.Interfaces;
 
-namespace API.Services
+namespace Service.Implementations
 {
     public class ErrorLogService : IErrorLogService
     {

@@ -1,72 +1,82 @@
-﻿using Infrastructure.DTO;
-using Microsoft.AspNetCore.Authentication;
+﻿using Common;
+using Infrastructure.DTO;
+using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Service.Implementations;
 using Service.Interfaces;
-using System.Security.Claims;
 
 namespace UI.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IJwtService _jwtService;
+        private readonly ISessionService _sessionService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, IJwtService jwtService, ISessionService sessionService)
         {
             _userService = userService;
+            _jwtService = jwtService;
+            _sessionService = sessionService;
         }
         public IActionResult Login()
         {
             return View();
         }
 
-        public IActionResult LoginUser(LoginDTO loginDTO)
+        public async Task<IActionResult> LoginUser(LoginDTO loginDTO)
         {
-            var item = checkUser(loginDTO).Result;
+            var token = await _userService.Login(loginDTO);
 
-            if (item == -1)
+            if (string.IsNullOrEmpty(token))
             {
                 ViewBag.ErrorMessage = "Wrong user name or password!";
                 return View("Login");
             }
             else
             {
-                var userClaim = new List<Claim>()
+                // Retrieve UserID from the token
+                var claims = _jwtService.GetClaims(token);
+                var userId = claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    new Claim(ClaimTypes.NameIdentifier, loginDTO.UserName),
-                    new Claim("UserName", loginDTO.UserName),
-                    new Claim("UserID", item.ToString())
-                };
-                var identity = new ClaimsIdentity(userClaim, "User Identity");
-                var principal = new ClaimsPrincipal(identity);
-                HttpContext.SignInAsync(principal);
+                    // Register the session
+                    await _sessionService.RegisterSessionAsync(userId, token);
+
+                    // Store the JWT in a cookie
+                    Response.Cookies.Append("AuthToken", token, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = false,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.UtcNow.AddHours(8)
+                    });
+                }
 
                 return RedirectToAction("Index", "Home");
             }
         }
 
-        private async Task<int> checkUser(LoginDTO loginDTO)
-        {
-
-            var response = await _userService.Login(loginDTO);
-
-            var Data = await response.Content.ReadAsStringAsync();
-            int id = JsonConvert.DeserializeObject<int>(Data);
-
-            return id;
-        }
-
         public async Task<IActionResult> LogOut()
         {
-            var _user = HttpContext.User as ClaimsPrincipal;
-            var _identity = _user.Identity as ClaimsIdentity;
-
-            foreach (var claim in _user.Claims.ToList())
+            var token = Request.Cookies["AuthToken"];
+            if (!string.IsNullOrEmpty(token))
             {
-                _identity.RemoveClaim(claim);
+                var claims = _jwtService.GetClaims(token);
+                var userId = claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    await _sessionService.InvalidateSessionAsync(userId);
+                }
+
+                Response.Cookies.Delete("AuthToken");
             }
-            await HttpContext.SignOutAsync();
+
             return RedirectToAction("Login", "Account");
         }
+
     }
 }

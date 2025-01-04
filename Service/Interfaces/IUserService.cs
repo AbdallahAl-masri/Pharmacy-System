@@ -1,4 +1,5 @@
 ﻿using Infrastructure.DTO;
+using Microsoft.AspNetCore.Http;
 
 namespace Service.Interfaces
 {
@@ -12,6 +13,6 @@ namespace Service.Interfaces
         public Task<HttpResponseMessage> GetUserById(int Id);
         public Task<HttpResponseMessage> Delete(int Id);
         public Task<HttpResponseMessage> UpdateUser(UserDTO userDTO);
-        public Task<HttpResponseMessage> Login(LoginDTO loginDTO);
+        public Task<string> Login(LoginDTO loginDTO);
     }
 }

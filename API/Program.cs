@@ -1,7 +1,13 @@
-using API.Services;
-using Infrastructure.Helper;
+using API.Middleware;
+using Common;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Repository.IRepository;
 using Repository.Repository;
+using Service.BackgroundServices;
+using Service.Implementations;
+using Service.Interfaces;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +31,26 @@ builder.Services.AddScoped<IInvoiceMasterRepository, InvoiceMasterRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailsRepository>();
 builder.Services.AddScoped<IErrorLogService, ErrorLogService>();
 
+builder.Services.AddHostedService<SessionCleanupService>();
+builder.Services.AddSingleton<ISessionService, SessionService>();
+builder.Services.AddSingleton<IJwtService>(provider => new JwtService("ASP.NET_CORE(MVC&API)PharmacyManagementSystem"));
+
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {   
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "http://localhost:5039",
+            ValidAudience = "http://localhost:5130",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ASP.NET_CORE(MVC&API)PharmacyManagementSystem"))
+        };
+    });
+
 
 builder.Services.AddCors(options =>
 {
@@ -38,6 +64,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowAll");
+
+app.UseMiddleware<SessionValidationMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

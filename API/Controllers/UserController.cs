@@ -1,10 +1,11 @@
-﻿using Infrastructure.Base;
+﻿using Common;
+using Infrastructure.Base;
 using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Repository.IRepository;
+using Service.Interfaces;
 
 namespace API.Controllers
 {
@@ -17,15 +18,18 @@ namespace API.Controllers
         private readonly IErrorLogService _errorLogService;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly ISectionRepository _sectionRepository;
+        private readonly IJwtService _jwtService;
 
         public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, IErrorLogService errorLogService,
-             IDepartmentRepository departmentRepository, ISectionRepository sectionRepository)
+             IDepartmentRepository departmentRepository, ISectionRepository sectionRepository,
+             IJwtService jwtService)
         {
             _userRepository = userRepository;
             _jobDescriptionRepository = jobDescriptionRepository;
             _errorLogService = errorLogService;
             _departmentRepository = departmentRepository;
             _sectionRepository = sectionRepository;
+            _jwtService = jwtService;
         }
 
 
@@ -246,22 +250,32 @@ namespace API.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginDTO loginDTO)
         {
-            var result = _userRepository.Find(x => x.UserName.Equals(loginDTO.UserName)).FirstOrDefault();
+            var user = _userRepository.Find(x => x.UserName.Equals(loginDTO.UserName)).FirstOrDefault();
 
-            if (result == null)
+            UserDTO userDTO = new UserDTO() 
             {
-                return BadRequest(-1);
+                UserName = user.UserName,
+                UserId = user.UserId,
+            };
+
+            if (user == null)
+            {
+                return Unauthorized();
             }
             else
             {
                 loginDTO.Password = Security.EncryptString(loginDTO.Password);
-                if (result.Password.Equals(loginDTO.Password))
+                if (user.Password.Equals(loginDTO.Password))
                 {
-                    return Ok(result.UserId);
+                    var token = _jwtService.GenerateToken(userDTO.UserId.ToString(), 
+                        userDTO.UserName, 
+                        DateTime.Now.AddMinutes(5));
+
+                    return Ok(new {token});
                 }
                 else
                 {
-                    return BadRequest(-1);
+                    return Unauthorized();
                 }
             }
         }

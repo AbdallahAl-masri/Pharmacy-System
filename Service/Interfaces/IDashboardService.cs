@@ -1,7 +1,9 @@
-﻿namespace Service.Interfaces
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Service.Interfaces
 {
     public interface IDashboardService
     {
-        public Task<HttpResponseMessage> GetDashboardDetails();
+        public Task<HttpResponseMessage> GetDashboardDetails(string token);
     }
 }

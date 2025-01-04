@@ -1,4 +1,5 @@
-﻿using Infrastructure.Base;
+﻿using Common;
+using Infrastructure.Base;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,7 +11,7 @@ namespace UI.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IJwtService jwtService, IUserService userService) : base(jwtService)
         {
             _userService = userService;
         }

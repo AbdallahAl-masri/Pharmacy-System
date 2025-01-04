@@ -1,7 +1,10 @@
-﻿using Infrastructure.DTO;
+﻿//using Azure.Core;
+using Infrastructure.DTO;
 using Infrastructure.Helper;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Service.Interfaces;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Service.Implementations
@@ -75,14 +78,18 @@ namespace Service.Implementations
             return response;
         }
 
-        public async Task<HttpResponseMessage> Login(LoginDTO loginDTO)
+        public async Task<string> Login(LoginDTO loginDTO)
         {
             HttpClient client = new HttpClient();
+
             var LoginContextDTO = JsonConvert.SerializeObject(loginDTO);
 
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "users/login", new StringContent(LoginContextDTO, Encoding.UTF8, "application/json"));
 
-            return response;
+            var apiResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(apiResponse);
+
+            return result.token;
         }
     }
 }

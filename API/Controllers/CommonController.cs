@@ -1,8 +1,8 @@
 ﻿using Infrastructure.DTO;
-using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.IRepository;
+using Service.Interfaces;
 
 namespace API.Controllers
 {
