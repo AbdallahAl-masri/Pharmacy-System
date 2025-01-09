@@ -2,9 +2,11 @@
 using Infrastructure.DTO;
 using Infrastructure.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Service.Implementations;
 using Service.Interfaces;
+using System.Net;
 
 namespace UI.Controllers
 {
@@ -27,36 +29,54 @@ namespace UI.Controllers
 
         public async Task<IActionResult> LoginUser(LoginDTO loginDTO)
         {
-            var token = await _userService.Login(loginDTO);
+            loginDTO.Token = Request.Cookies["AuthToken"];
+            var response = await _userService.Login(loginDTO);
 
-            if (string.IsNullOrEmpty(token))
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                ViewBag.ErrorMessage = "Wrong user name or password!";
+                ViewBag.ErrorMessage = "Wrong username or password!";
                 return View("Login");
             }
-            else
+            if (response.IsSuccessStatusCode)
             {
                 // Retrieve UserID from the token
+                var apiResponse = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<dynamic>(apiResponse);
+                string token = result.token;
                 var claims = _jwtService.GetClaims(token);
                 var userId = claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
 
-                if (!string.IsNullOrEmpty(userId))
+                SessionInfoDTO sessionDTO = new SessionInfoDTO()
                 {
-                    // Register the session
-                    await _sessionService.RegisterSessionAsync(userId, token);
+                    UserId = userId,
+                    Token = token,
+                };
 
-                    // Store the JWT in a cookie
-                    Response.Cookies.Append("AuthToken", token, new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = false,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.UtcNow.AddHours(8)
-                    });
-                }
+                // Register the session
+                await _sessionService.InvalidateSessionAsync(sessionDTO);
+                await _sessionService.RegisterSessionAsync(sessionDTO);
+
+                // Store the JWT in a cookie
+                Response.Cookies.Append("AuthToken", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(5)
+                });
 
                 return RedirectToAction("Index", "Home");
             }
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<dynamic>(responseBody);
+                ViewBag.ErrorMessage = error.message.ToString();
+                return View("Login");
+            }
+
+            ViewBag.ErrorMessage = "An error occurred while logging in.";
+            return View("Login");
         }
 
         public async Task<IActionResult> LogOut()
@@ -69,7 +89,11 @@ namespace UI.Controllers
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    await _sessionService.InvalidateSessionAsync(userId);
+                    SessionInfoDTO sessionDTO = new SessionInfoDTO()
+                    {
+                        UserId = userId,
+                    };
+                    await _sessionService.InvalidateSessionAsync(sessionDTO);
                 }
 
                 Response.Cookies.Delete("AuthToken");
@@ -77,6 +101,7 @@ namespace UI.Controllers
 
             return RedirectToAction("Login", "Account");
         }
+
 
     }
 }

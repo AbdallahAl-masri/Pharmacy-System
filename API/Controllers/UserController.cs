@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Repository.IRepository;
+using Service.Implementations;
 using Service.Interfaces;
 
 namespace API.Controllers
@@ -19,10 +20,11 @@ namespace API.Controllers
         private readonly IDepartmentRepository _departmentRepository;
         private readonly ISectionRepository _sectionRepository;
         private readonly IJwtService _jwtService;
+        private readonly ISessionService _sessionService;
 
         public UserController(IUserRepository userRepository, IJobDescriptionRepository jobDescriptionRepository, IErrorLogService errorLogService,
              IDepartmentRepository departmentRepository, ISectionRepository sectionRepository,
-             IJwtService jwtService)
+             IJwtService jwtService, ISessionService sessionService)
         {
             _userRepository = userRepository;
             _jobDescriptionRepository = jobDescriptionRepository;
@@ -30,6 +32,7 @@ namespace API.Controllers
             _departmentRepository = departmentRepository;
             _sectionRepository = sectionRepository;
             _jwtService = jwtService;
+            _sessionService = sessionService;
         }
 
 
@@ -248,11 +251,11 @@ namespace API.Controllers
 
 
         [HttpPost("login")]
-        public IActionResult Login(LoginDTO loginDTO)
+        public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
             var user = _userRepository.Find(x => x.UserName.Equals(loginDTO.UserName)).FirstOrDefault();
 
-            UserDTO userDTO = new UserDTO() 
+            UserDTO userDTO = new UserDTO()
             {
                 UserName = user.UserName,
                 UserId = user.UserId,
@@ -262,22 +265,31 @@ namespace API.Controllers
             {
                 return Unauthorized();
             }
-            else
-            {
-                loginDTO.Password = Security.EncryptString(loginDTO.Password);
-                if (user.Password.Equals(loginDTO.Password))
-                {
-                    var token = _jwtService.GenerateToken(userDTO.UserId.ToString(), 
-                        userDTO.UserName, 
-                        DateTime.Now.AddMinutes(5));
 
-                    return Ok(new {token});
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+            SessionInfoDTO sessionDTO = new SessionInfoDTO()
+            { 
+                UserId = user.UserId.ToString(),
+                Token = loginDTO.Token,
+            };
+
+            if (await _sessionService.IsSessionActiveAsync(sessionDTO))
+            {
+                return Conflict(new { message = "This user already has an active session." });
             }
+
+
+            loginDTO.Password = Security.EncryptString(loginDTO.Password);
+            if (user.Password.Equals(loginDTO.Password))
+            {
+                var token = _jwtService.GenerateToken(userDTO.UserId.ToString(),
+                    userDTO.UserName,
+                    DateTime.Now.AddMinutes(5));
+
+                return Ok(new { token });
+            }
+
+            return Unauthorized();
+
         }
 
 

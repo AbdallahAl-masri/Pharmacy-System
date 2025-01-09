@@ -1,28 +1,55 @@
-﻿using Infrastructure.DTO;
+﻿using EntitiyComponent.DBEntities;
+using Infrastructure.DTO;
+using Infrastructure.Helper;
+using Newtonsoft.Json;
+using Repository.IRepository;
 using Service.Interfaces;
 using System.Collections.Concurrent;
+using System.Text;
 
 namespace Service.Implementations
 {
     public class SessionService : ISessionService
     {
-        private readonly ConcurrentDictionary<string, string> _activeSessions = new();
 
-        public Task<bool> IsSessionActiveAsync(string userId, string token)
+        public async Task<bool> IsSessionActiveAsync(SessionInfoDTO sessionDTO)
         {
-            return Task.FromResult(_activeSessions.TryGetValue(userId, out var activeToken) && activeToken == token);
+            HttpClient client = new HttpClient();
+            var context = new StringContent(JsonConvert.SerializeObject(sessionDTO), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{ConfigSettings.BaseApiUrl}session/active", context);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return bool.Parse(content);
+            }
+            return false;
         }
 
-        public Task RegisterSessionAsync(string userId, string token)
+        public async Task RegisterSessionAsync(SessionInfoDTO sessionDTO)
         {
-            _activeSessions[userId] = token;
-            return Task.CompletedTask;
+            HttpClient client = new HttpClient();
+            var jsonContent = JsonConvert.SerializeObject(sessionDTO);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{ConfigSettings.BaseApiUrl}session", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to create or update the session.");
+            }
         }
 
-        public Task InvalidateSessionAsync(string userId)
+        public async Task InvalidateSessionAsync(SessionInfoDTO sessionDTO)
         {
-            _activeSessions.TryRemove(userId, out _);
-            return Task.CompletedTask;
+            HttpClient client = new HttpClient();
+            var content = new StringContent(JsonConvert.SerializeObject(sessionDTO), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{ConfigSettings.BaseApiUrl}session/invalidate", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to delete the session.");
+            }
         }
     }
+
+
 }

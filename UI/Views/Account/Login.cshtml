@@ -37,18 +37,18 @@
             width: 100%;
         }
 
-        .login-container h2 {
-            color: #77c395;
-        }
+            .login-container h2 {
+                color: #77c395;
+            }
 
         .btn-login {
             background-color: #77c395;
             border: none;
         }
 
-        .btn-login:hover {
-            background-color: #45a049;
-        }
+            .btn-login:hover {
+                background-color: #45a049;
+            }
 
         .password-icon {
             position: absolute;
@@ -62,23 +62,33 @@
     <div class="login-container">
         <h2 class="text-center">Pharmacy System</h2>
         <form asp-action="LoginUser">
-            <div class="mb-3">
-                User Name <span class="text-danger">*</span>
-                <input type="text" asp-for="UserName" class="form-control" placeholder="Please enter your user name" required />
+            @if (!string.IsNullOrEmpty(ViewBag.SessionErrorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+            <div class="row">
+                <div class="mb-3">
+                    User Name <span class="text-danger">*</span>
+                    <input type="text" asp-for="UserName" class="form-control" placeholder="Please enter your user name" required />
+                </div>
             </div>
+
             <div class="mb-3">
                 Password <span class="text-danger">*</span>
                 <input type="password" asp-for="Password" id="passwordField" class="form-control" placeholder="Please enter your password" required />
                 <i class="fa fa-eye password-icon" id="togglePassword"></i>
             </div>
-
-            <div class="mb-3">
-                @if (ViewBag.ErrorMessage != null)
-                {
-                    <div class="alert alert-danger">
-                        @ViewBag.ErrorMessage
-                    </div>
-                }
+            <div class="row">
+                <div class="mb-3">
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.ErrorMessage
+                        </div>
+                    }
+                </div>
             </div>
 
             <button type="submit" class="btn rounded-pill btn-login w-100">Login</button>

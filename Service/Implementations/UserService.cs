@@ -78,7 +78,7 @@ namespace Service.Implementations
             return response;
         }
 
-        public async Task<string> Login(LoginDTO loginDTO)
+        public async Task<HttpResponseMessage> Login(LoginDTO loginDTO)
         {
             HttpClient client = new HttpClient();
 
@@ -86,10 +86,7 @@ namespace Service.Implementations
 
             var response = await client.PostAsync(ConfigSettings.BaseApiUrl + "users/login", new StringContent(LoginContextDTO, Encoding.UTF8, "application/json"));
 
-            var apiResponse = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<dynamic>(apiResponse);
-
-            return result.token;
+            return response;
         }
     }
 }

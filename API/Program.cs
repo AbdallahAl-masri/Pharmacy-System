@@ -30,6 +30,7 @@ builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<IInvoiceMasterRepository, InvoiceMasterRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailsRepository>();
 builder.Services.AddScoped<IErrorLogService, ErrorLogService>();
+builder.Services.AddScoped<ISessionRepository, sessionRepository>();
 
 builder.Services.AddHostedService<SessionCleanupService>();
 builder.Services.AddSingleton<ISessionService, SessionService>();
@@ -73,7 +74,12 @@ if (app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
+app.UseRouting();
 app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    _ = endpoints.MapControllers();
+});
 
 app.MapControllers();
 

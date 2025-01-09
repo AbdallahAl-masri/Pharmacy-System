@@ -1,10 +1,12 @@
-﻿namespace Service.Interfaces
+﻿using Infrastructure.DTO;
+
+namespace Service.Interfaces
 {
     public interface ISessionService
     {
-        Task<bool> IsSessionActiveAsync(string userId, string token);
-        Task RegisterSessionAsync(string userId, string token);
-        Task InvalidateSessionAsync(string userId);
+        Task<bool> IsSessionActiveAsync(SessionInfoDTO sessionDTO);
+        Task RegisterSessionAsync(SessionInfoDTO sessionDTO);
+        Task InvalidateSessionAsync(SessionInfoDTO sessionDTO);
 
     }
 }

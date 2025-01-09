@@ -6,7 +6,11 @@ namespace Infrastructure.DTO
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "This field is required")]
         public string UserName { get; set; }
+
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "This field is required")]
         public string Password { get; set; }
+
+        public string Token { get; set; }
     }
 }

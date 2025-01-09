@@ -15,6 +15,7 @@ builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
+
 builder.Services.AddSingleton<ISessionService, SessionService>();
 builder.Services.AddSingleton<IJwtService>(provider => new JwtService("ASP.NET_CORE(MVC&API)PharmacyManagementSystem"));
 
